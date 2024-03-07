@@ -4,7 +4,6 @@
 #include "hardware/gpio.h"
 
 #include "FreeRTOS.h"
-#include "FreeRTOSConfig.h"
 #include "task.h"
 #include "main.h"
 
@@ -17,21 +16,18 @@ int main()
     stdio_init_all();
 
 
-    TaskHandle_t clock_control_task_handle = NULL;
+    // TaskHandle_t clock_control_task_handle = NULL;
 
     // Initialize the built in LED GPIO.
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
 
-    uint32_t status_clock_control_task = xTaskCreate(
-                    clock_control_task,
-                    "Matrix Task",
-                    4096,
-                    NULL,
-                    10,
-                    &clock_control_task_handle);
+    TaskHandle_t xled_handle1;
+	
+	  xTaskCreate(clock_control_task, "LED", configMINIMAL_STACK_SIZE, (void*)&delay_time1, 10, &(xled_handle1) );
+    vTaskCoreAffinitySet(xled_handle1, (1 << 0));
 
-    vTaskStartScheduler();
+	  vTaskStartScheduler();
 
     for( ;; )
     {

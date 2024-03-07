@@ -1,40 +1,60 @@
 cmake_minimum_required(VERSION 3.19)
 
+SET(project_name "alarm_clock_control")
+SET(FREERTOS_KERNEL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../external/FreeRTOS-Kernel")
 # initialize the SDK based on PICO_SDK_PATH
 include(pico_sdk_import.cmake)
-project(alarm_clock_control)
+# project(alarm_clock_control C CXX ASM)
+project(${project_name} C CXX ASM)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 # initialize the Pico SDK
 pico_sdk_init()
+
+SET(FREERTOS_CONFIG_FILE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include" CACHE STRING "Local Config")
+include_directories(${FREERTOS_CONFIG_FILE_DIRECTORY})
+include(FreeRTOS_Kernel_import.cmake)
+
+add_compile_definitions(
+  FREE_RTOS_KERNEL_SMP=1
+  portSUPPORT_SMP=1
+)
 
 add_executable(alarm_clock_control
     src/main.c
     src/alarm_clock.c
 )
 
-# Uncomment the following line to add a PIO program.
-# pico_generate_pio_header(alarm_clock_control ${CMAKE_CURRENT_LIST_DIR}/src/alarm_clock.pio)
 
-FILE(GLOB FreeRTOS_src ../external/FreeRTOS-Kernel/*.c)
+target_include_directories(alarm_clock_control PRIVATE
+  ${CMAKE_CURRENT_LIST_DIR}
+  include/
+  )
 
-add_library( FreeRTOS STATIC
-	${FreeRTOS_src}
-	../external/FreeRTOS-Kernel/portable/GCC/ARM_CM0/port.c
-	../external/FreeRTOS-Kernel/portable/MemMang/heap_4.c
+
+#add_library(FreeRTOS STATIC
+#    ../external/FreeRTOS-Kernel/portable/MemMang/heap_4.c
+#)
+
+target_link_libraries(alarm_clock_control 
+  pico_stdlib 
+  FreeRTOS-Kernel-Heap4
+  hardware_gpio
+  hardware_pio
 )
 
-target_include_directories( FreeRTOS PUBLIC
-		../external/FreeRTOS-Kernel/include
-		include/
-		../external/FreeRTOS-Kernel/portable/GCC/ARM_CM0
-	)
 
-target_link_libraries(alarm_clock_control
-	pico_stdlib 
-	hardware_gpio 
-	hardware_pio
-	FreeRTOS
-	)
+target_include_directories(alarm_clock_control PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/../external/FreeRTOS-Kernel/include
+)
 
+
+target_compile_definitions(alarm_clock_control PRIVATE
+    FREE_RTOS_KERNEL_SMP=1
+    portSUPPORT_SMP=1
+)
 	
 pico_add_extra_outputs(alarm_clock_control)
+pico_enable_stdio_usb(alarm_clock_control 1)
+pico_enable_stdio_uart(alarm_clock_control 0)

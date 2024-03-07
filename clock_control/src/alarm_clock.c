@@ -12,18 +12,19 @@
 #include "hardware/regs/addressmap.h"
 
 #include "FreeRTOS.h"
-#include "FreeRTOSConfig.h"
+// #include "FreeRTOSConfig.h"
 #include "task.h"
 #include "main.h"
 #include "alarm_clock.h"
 
 
 void clock_control_task(void* args){
+  int *delay_time = (int*)args;
   for(;;){
     gpio_put(LED_PIN, 1);
-    vTaskDelay(500);
+    vTaskDelay(*delay_time);
     gpio_put(LED_PIN, 0);
-    vTaskDelay(500);
+    vTaskDelay(*delay_time);
   }
 
 }

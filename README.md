@@ -14,6 +14,9 @@ git clone --recurse-submodules https://github.com/DawsonTheroux/alarm_clock.git 
 sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib
 ```
 
+### 3. Setup the ESP-IDF environment for the ESP8684
+https://docs.espressif.com/projects/esp-idf/en/v5.2/esp32c2/get-started/linux-macos-setup.html 
+
 ### 3. Build using bash
 ```
 ./build.sh
