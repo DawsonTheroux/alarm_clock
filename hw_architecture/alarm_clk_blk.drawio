@@ -1,143 +1,168 @@
-<mxfile host="Electron" modified="2024-03-08T05:11:15.819Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="i3gDXWo1L4JsNnuyqnGO" version="23.1.5" type="device" pages="2">
+<mxfile host="app.diagrams.net" modified="2024-03-09T03:15:43.952Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36" etag="tQ-XNAH2fGb82J6PujKD" version="23.1.7" type="device" pages="2">
   <diagram id="R2lEEEUBdFMjLlhIrx00" name="Data Path">
-    <mxGraphModel dx="1434" dy="836" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1100" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
+    <mxGraphModel dx="1434" dy="756" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1100" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="wMOnWl37XSj11jP713QI-9" value="FT2232?&lt;br&gt;USB-UART bridge" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="590" y="670" width="120" height="60" as="geometry" />
+          <mxGeometry x="636" y="592.5" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-11" value="&amp;nbsp; &amp;nbsp;USB-C 2.0 &lt;br&gt;&amp;nbsp; &amp;nbsp;Receptacle" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
-          <mxGeometry x="320" y="670" width="140" height="60" as="geometry" />
+          <mxGeometry x="435" y="592.5" width="140" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="wMOnWl37XSj11jP713QI-13" target="wMOnWl37XSj11jP713QI-9" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-13" value="D+/-" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
-          <mxGeometry x="420" y="680" width="40" height="40" as="geometry" />
+          <mxGeometry x="535" y="602.5" width="40" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="wMOnWl37XSj11jP713QI-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="wMOnWl37XSj11jP713QI-15" target="wMOnWl37XSj11jP713QI-41" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1210" y="530" />
-              <mxPoint x="1210" y="470" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="wMOnWl37XSj11jP713QI-43" value="SPI" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="wMOnWl37XSj11jP713QI-42" vertex="1" connectable="0">
-          <mxGeometry x="0.3601" y="2" relative="1" as="geometry">
-            <mxPoint x="-34" y="58" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="KRrXA6NS5M0XdtmwibU5-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" parent="1" source="wMOnWl37XSj11jP713QI-15" target="wMOnWl37XSj11jP713QI-16" edge="1">
+        <mxCell id="465dUBvNF7ZcCZ9cSyCv-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" edge="1" parent="1" source="wMOnWl37XSj11jP713QI-15" target="KRrXA6NS5M0XdtmwibU5-9">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="KRrXA6NS5M0XdtmwibU5-8" value="??" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="KRrXA6NS5M0XdtmwibU5-5" vertex="1" connectable="0">
-          <mxGeometry x="-0.2" y="1" relative="1" as="geometry">
-            <mxPoint x="9" y="-8" as="offset" />
-          </mxGeometry>
+        <mxCell id="tx2Wy5a_AxNPYO6ndvp1-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" edge="1" parent="1" source="wMOnWl37XSj11jP713QI-15" target="tx2Wy5a_AxNPYO6ndvp1-1">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-15" value="&lt;div style=&quot;text-align: justify;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;RP2040&lt;/span&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="895" y="500" width="260" height="145" as="geometry" />
         </mxCell>
-        <mxCell id="KRrXA6NS5M0XdtmwibU5-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="wMOnWl37XSj11jP713QI-16" target="wMOnWl37XSj11jP713QI-45" edge="1">
+        <mxCell id="465dUBvNF7ZcCZ9cSyCv-5" value="chip comms" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.225;entryY=0.992;entryDx=0;entryDy=0;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryPerimeter=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="wMOnWl37XSj11jP713QI-16" target="wMOnWl37XSj11jP713QI-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="465dUBvNF7ZcCZ9cSyCv-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="wMOnWl37XSj11jP713QI-16" target="wMOnWl37XSj11jP713QI-45">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-16" value="&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;ESP8684 with integrated antenna&lt;/span&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="1" vertex="1">
-          <mxGeometry x="895" y="695" width="145" height="55" as="geometry" />
+          <mxGeometry x="917" y="720" width="145" height="55" as="geometry" />
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-17" value="1" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
-          <mxGeometry x="710" y="670" width="30" height="30" as="geometry" />
+          <mxGeometry x="756" y="592.5" width="30" height="30" as="geometry" />
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-18" value="2" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
-          <mxGeometry x="710" y="700" width="30" height="30" as="geometry" />
+          <mxGeometry x="756" y="622.5" width="30" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="wMOnWl37XSj11jP713QI-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="wMOnWl37XSj11jP713QI-17" target="wMOnWl37XSj11jP713QI-15" edge="1">
+        <mxCell id="wMOnWl37XSj11jP713QI-19" value="UART" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="wMOnWl37XSj11jP713QI-17" target="wMOnWl37XSj11jP713QI-15" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="wMOnWl37XSj11jP713QI-21" value="UART" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="wMOnWl37XSj11jP713QI-19" vertex="1" connectable="0">
-          <mxGeometry x="-0.3943" y="1" relative="1" as="geometry">
-            <mxPoint x="43" y="-75" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="wMOnWl37XSj11jP713QI-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" target="wMOnWl37XSj11jP713QI-16" edge="1">
+        <mxCell id="wMOnWl37XSj11jP713QI-20" value="UART" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" target="wMOnWl37XSj11jP713QI-16" edge="1" source="wMOnWl37XSj11jP713QI-18">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="745" y="716.0144927536231" as="sourcePoint" />
             <mxPoint x="895" y="715" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="wMOnWl37XSj11jP713QI-22" value="UART" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="wMOnWl37XSj11jP713QI-20" vertex="1" connectable="0">
-          <mxGeometry x="-0.2791" relative="1" as="geometry">
-            <mxPoint x="61" y="4" as="offset" />
+            <Array as="points">
+              <mxPoint x="840" y="638" />
+              <mxPoint x="840" y="748" />
+            </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-23" value="RTC Chip&lt;br&gt;PCF85263AT?" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="695" y="420" width="120" height="60" as="geometry" />
+          <mxGeometry x="666" y="506" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="wMOnWl37XSj11jP713QI-24" target="wMOnWl37XSj11jP713QI-23" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-24" value="Battery backup&lt;br&gt;li-on or supercap?" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="525" y="420" width="120" height="60" as="geometry" />
+          <mxGeometry x="455" y="506" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="wMOnWl37XSj11jP713QI-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="wMOnWl37XSj11jP713QI-23" target="wMOnWl37XSj11jP713QI-15" edge="1">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="wMOnWl37XSj11jP713QI-29" value="I2C" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;" parent="1" source="wMOnWl37XSj11jP713QI-23" target="wMOnWl37XSj11jP713QI-15" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="810" y="536" />
+              <mxPoint x="810" y="536" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-41" value="E-Ink screen&lt;br&gt;PN?" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="1260" y="440" width="110" height="60" as="geometry" />
+          <mxGeometry x="1240" y="500" width="110" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-45" value="WIFI/BLE" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="1120" y="707.5" width="60" height="30" as="geometry" />
+          <mxGeometry x="1100" y="732.5" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="KRrXA6NS5M0XdtmwibU5-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="wMOnWl37XSj11jP713QI-48" target="KRrXA6NS5M0XdtmwibU5-2" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="KRrXA6NS5M0XdtmwibU5-7" value="PWM" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="KRrXA6NS5M0XdtmwibU5-3" vertex="1" connectable="0">
           <mxGeometry x="0.0609" y="-1" relative="1" as="geometry">
-            <mxPoint x="-26" y="-26" as="offset" />
+            <mxPoint x="-11" y="-2" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-48" value="PIO SMs" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1090" y="600" width="65" height="45" as="geometry" />
         </mxCell>
+        <mxCell id="z3xZdLynoYUoiguRZ6o--5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="wMOnWl37XSj11jP713QI-49" target="wMOnWl37XSj11jP713QI-41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="z3xZdLynoYUoiguRZ6o--6" value="SPI" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="z3xZdLynoYUoiguRZ6o--5">
+          <mxGeometry x="-0.0231" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-49" value="PIO? or hard peripheral" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1090" y="500" width="65" height="60" as="geometry" />
         </mxCell>
         <mxCell id="KRrXA6NS5M0XdtmwibU5-2" value="Buzzer&lt;br&gt;PN?" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="1260" y="635" width="110" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="KRrXA6NS5M0XdtmwibU5-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" parent="1" source="KRrXA6NS5M0XdtmwibU5-9" target="wMOnWl37XSj11jP713QI-15" edge="1">
-          <mxGeometry relative="1" as="geometry" />
+          <mxGeometry x="1241" y="593" width="110" height="60" as="geometry" />
         </mxCell>
         <mxCell id="KRrXA6NS5M0XdtmwibU5-9" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;EEPROM&lt;br&gt;PN?&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1" parent="1" vertex="1">
-          <mxGeometry x="860" y="350" width="120" height="60" as="geometry" />
+          <mxGeometry x="666" y="330" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="KRrXA6NS5M0XdtmwibU5-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="KRrXA6NS5M0XdtmwibU5-11" target="wMOnWl37XSj11jP713QI-15" edge="1">
+        <mxCell id="KRrXA6NS5M0XdtmwibU5-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.231;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="KRrXA6NS5M0XdtmwibU5-11" target="wMOnWl37XSj11jP713QI-15" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="KRrXA6NS5M0XdtmwibU5-11" value="Button(s) and LED(s)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="1020" y="350" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="KRrXA6NS5M0XdtmwibU5-22" value="I2C" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="1" vertex="1" connectable="0">
-          <mxGeometry x="850" y="500.0000000000001" as="geometry" />
+        <mxCell id="KRrXA6NS5M0XdtmwibU5-11" value="Button x 4" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="912" y="350" width="85" height="40" as="geometry" />
         </mxCell>
         <mxCell id="bKKHbc3bsOOG26eRoQBU-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="bKKHbc3bsOOG26eRoQBU-1" target="bKKHbc3bsOOG26eRoQBU-2" edge="1">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="z3xZdLynoYUoiguRZ6o--7" value="SPI / SDIO" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="bKKHbc3bsOOG26eRoQBU-3">
+          <mxGeometry x="-0.3567" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="bKKHbc3bsOOG26eRoQBU-1" value="PIO SMs" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1090" y="555" width="65" height="45" as="geometry" />
         </mxCell>
         <mxCell id="bKKHbc3bsOOG26eRoQBU-2" value="SD Card&lt;br&gt;PN?" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="1260" y="540" width="110" height="60" as="geometry" />
+          <mxGeometry x="1380" y="548" width="110" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="bKKHbc3bsOOG26eRoQBU-4" value="Is this battery backup and RTC redundant if we have RTC in the RP2040 and automatic battery backup already?" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="530" y="360" width="250" height="50" as="geometry" />
+        <mxCell id="bKKHbc3bsOOG26eRoQBU-4" value="Is this battery backup and RTC redundant if we have RTC in the RP2040 and automatic battery backup already?&lt;br&gt;&lt;br&gt;Since we are going power saver route, we should have battery and RTC -D.T" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="350" y="380" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="465dUBvNF7ZcCZ9cSyCv-1" value="SWD Pins" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="995" y="621.5" width="60" height="23.5" as="geometry" />
+        </mxCell>
+        <mxCell id="465dUBvNF7ZcCZ9cSyCv-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="wMOnWl37XSj11jP713QI-16" target="wMOnWl37XSj11jP713QI-15">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1013" y="643" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tx2Wy5a_AxNPYO6ndvp1-1" value="&lt;span style=&quot;font-weight: 400;&quot;&gt;Power Management&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="666" y="420" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z3xZdLynoYUoiguRZ6o--1" value="GPIO" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="942" y="500" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z3xZdLynoYUoiguRZ6o--2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.231;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="z3xZdLynoYUoiguRZ6o--3">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1048" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="z3xZdLynoYUoiguRZ6o--3" value="E-Ink Light" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1006" y="350" width="85" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="z3xZdLynoYUoiguRZ6o--11" value="If we go the PIO route here. We just need to put data pins in line, and control pins in line." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fontColor=#000000;darkOpacity=0.05;fillColor=#FFF9B2;strokeColor=none;fillStyle=solid;direction=west;gradientDirection=north;gradientColor=#FFF2A1;shadow=1;size=20;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="1520" y="533" width="150" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="z3xZdLynoYUoiguRZ6o--12" value="If we do choose SPI for SD. It should be on another BUS than the screen." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fontColor=#000000;darkOpacity=0.05;fillColor=#FFF9B2;strokeColor=none;fillStyle=solid;direction=west;gradientDirection=north;gradientColor=#FFF2A1;shadow=1;size=20;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="380" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="iLwx1BD44I-eFol4IrJl-1" value="Can we use the same battery for the RTC as the device? Maybe better practice for RTC to have dedicated batter?" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fontColor=#000000;darkOpacity=0.05;fillColor=#FFF9B2;strokeColor=none;fillStyle=solid;direction=west;gradientDirection=north;gradientColor=#FFF2A1;shadow=1;size=20;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="687.5" width="210" height="120" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
   <diagram id="SJFi7MKumW1ktK8oSeol" name="Power path">
-    <mxGraphModel dx="1434" dy="836" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1434" dy="756" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -146,13 +171,12 @@
             <mxPoint x="575" y="468" as="sourcePoint" />
             <mxPoint x="735" y="538" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="660" y="560" />
-              <mxPoint x="660" y="589" />
+              <mxPoint x="620" y="589" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="8-pdcfiz7RIw2LRktcdu-3" value="Rechargeable battery" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="1" vertex="1">
-          <mxGeometry x="560" y="685" width="100" height="50" as="geometry" />
+          <mxGeometry x="520" y="660" width="100" height="50" as="geometry" />
         </mxCell>
         <mxCell id="8-pdcfiz7RIw2LRktcdu-4" value="5V0_USB" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="690" y="560" width="60" height="30" as="geometry" />
@@ -162,8 +186,7 @@
             <mxPoint x="630" y="718" as="sourcePoint" />
             <mxPoint x="735" y="723" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="700" y="710" />
-              <mxPoint x="700" y="686" />
+              <mxPoint x="620" y="686" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -180,13 +203,39 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="_Ap_r3wV2wbH8d6Qj0ez-1" value="" style="group" parent="1" vertex="1" connectable="0">
-          <mxGeometry x="480" y="530" width="140" height="60" as="geometry" />
+          <mxGeometry x="480" y="560" width="140" height="60" as="geometry" />
         </mxCell>
         <mxCell id="76JB4XDgyek0RS08VswH-1" value="&amp;nbsp; &amp;nbsp;USB-C 2.0 &lt;br&gt;&amp;nbsp; &amp;nbsp;Receptacle" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="_Ap_r3wV2wbH8d6Qj0ez-1" vertex="1">
           <mxGeometry width="140" height="60" as="geometry" />
         </mxCell>
         <mxCell id="76JB4XDgyek0RS08VswH-8" value="VBUS" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="_Ap_r3wV2wbH8d6Qj0ez-1" vertex="1">
           <mxGeometry x="100" y="10" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="m2KU7UxuGeEaF3Yhpwbi-6" value="RP2040 GPIO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="m2KU7UxuGeEaF3Yhpwbi-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1220" y="770" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2KU7UxuGeEaF3Yhpwbi-2" value="FET" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="610" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="m2KU7UxuGeEaF3Yhpwbi-3" value="3V3_SYS" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1290" y="609" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="m2KU7UxuGeEaF3Yhpwbi-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=4;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1380" y="639" as="targetPoint" />
+            <mxPoint x="1280" y="639" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2KU7UxuGeEaF3Yhpwbi-5" value="e-ink display light" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="609" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="m2KU7UxuGeEaF3Yhpwbi-7" value="Would we run into current issues when charging the battery at the same time as running evrything?" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fontColor=#000000;darkOpacity=0.05;fillColor=#FFF9B2;strokeColor=none;fillStyle=solid;direction=west;gradientDirection=north;gradientColor=#FFF2A1;shadow=1;size=20;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="690" y="420" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="iQKmC827vp9OKKHtGp0N-1" value="Switch to turn off completely?" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fontColor=#000000;darkOpacity=0.05;fillColor=#FFF9B2;strokeColor=none;fillStyle=solid;direction=west;gradientDirection=north;gradientColor=#FFF2A1;shadow=1;size=20;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="740" width="140" height="100" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
