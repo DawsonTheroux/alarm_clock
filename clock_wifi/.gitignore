@@ -1,0 +1,9 @@
+build/
+managed_components/
+dependencies.lock
+*.o
+*.pyc
+
+# Ignore automatically generated sdkconfig files
+sdkconfig
+sdkconfig*
