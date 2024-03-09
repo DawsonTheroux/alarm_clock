@@ -1,7 +1,3 @@
-# NOTE: At the moment this is a copy of the example blink program:
-```
-https://github.com/espressif/esp-idf/tree/master/examples/get-started/blink
-```
 # Smart Alarm clock project
 
 NOTE: Right now, the PICO is built under WSL and the ESP8684 is built on Windows. I am going to look into getting the pico to build on windows.
