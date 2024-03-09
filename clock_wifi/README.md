@@ -1,3 +1,7 @@
+# NOTE: At the moment this is a copy of the example blink program:
+```
+https://github.com/espressif/esp-idf/tree/master/examples/get-started/blink
+```
 # Building the ESP project
 ### 1. source the build environment. On windows, run the ESP-IDF powershell
 ### 2. Set the board type
