@@ -8,15 +8,17 @@ https://github.com/espressif/esp-idf/tree/master/examples/get-started/blink
 ```
 idf.py set-target esp32c2
 ```
-### 3. Build the project
+### 3. Update wifi SSID and password 
+Update the default config for the wifi SSID and password by updating the defines in main/inc/wifi_secrets.h
+### 4. Build the ESP8684 project
 ```
 idf.py build
 ```
-### 4. Flash the board
+### 5. Flash the board
 ```
 idf.py -p <BOARD COM PORT> flash 
 ```
-### 5. Monitor the console
+### 6. Monitor the console
 ```
 idf.py -p <BOARD COM PORT> monitor
 ```

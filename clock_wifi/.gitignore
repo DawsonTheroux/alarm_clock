@@ -5,5 +5,5 @@ dependencies.lock
 *.pyc
 
 # Ignore automatically generated sdkconfig files
-sdkconfig
-sdkconfig*
+# sdkconfig
+sdkconfig.*
