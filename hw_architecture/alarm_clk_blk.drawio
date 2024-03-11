@@ -1,20 +1,17 @@
-<mxfile host="Electron" modified="2024-03-09T23:14:04.395Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="RV0ZORGELfZSAFppkB7L" version="23.1.5" type="device" pages="2">
+<mxfile host="Electron" modified="2024-03-11T03:44:08.672Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.0.4 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="sTCTtJJtz3PMzIcTL3Sn" version="24.0.4" type="device" pages="2">
   <diagram id="R2lEEEUBdFMjLlhIrx00" name="Data Path">
     <mxGraphModel dx="1434" dy="836" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1100" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="wMOnWl37XSj11jP713QI-9" value="FT2232?&lt;br&gt;USB-UART bridge" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="636" y="592.5" width="120" height="60" as="geometry" />
-        </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-11" value="&amp;nbsp; &amp;nbsp;USB-C 2.0 &lt;br&gt;&amp;nbsp; &amp;nbsp;Receptacle" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
-          <mxGeometry x="435" y="592.5" width="140" height="60" as="geometry" />
+          <mxGeometry x="435" y="592.5" width="140" height="127.5" as="geometry" />
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="wMOnWl37XSj11jP713QI-13" target="wMOnWl37XSj11jP713QI-9" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-13" value="D+/-" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
-          <mxGeometry x="535" y="602.5" width="40" height="40" as="geometry" />
+          <mxGeometry x="535" y="660" width="40" height="40" as="geometry" />
         </mxCell>
         <mxCell id="465dUBvNF7ZcCZ9cSyCv-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" parent="1" source="wMOnWl37XSj11jP713QI-15" target="KRrXA6NS5M0XdtmwibU5-9" edge="1">
           <mxGeometry relative="1" as="geometry" />
@@ -34,23 +31,23 @@
         <mxCell id="wMOnWl37XSj11jP713QI-16" value="&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;ESP8684 with integrated antenna&lt;/span&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="1" vertex="1">
           <mxGeometry x="917" y="720" width="145" height="55" as="geometry" />
         </mxCell>
-        <mxCell id="wMOnWl37XSj11jP713QI-17" value="1" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
-          <mxGeometry x="756" y="592.5" width="30" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="wMOnWl37XSj11jP713QI-18" value="2" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
-          <mxGeometry x="756" y="622.5" width="30" height="30" as="geometry" />
-        </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-19" value="UART" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="wMOnWl37XSj11jP713QI-17" target="wMOnWl37XSj11jP713QI-15" edge="1">
-          <mxGeometry relative="1" as="geometry" />
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="765" />
+              <mxPoint x="860" y="609" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-20" value="UART" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="wMOnWl37XSj11jP713QI-18" target="wMOnWl37XSj11jP713QI-16" edge="1">
-          <mxGeometry relative="1" as="geometry">
+          <mxGeometry x="-0.2783" relative="1" as="geometry">
             <mxPoint x="745" y="716.0144927536231" as="sourcePoint" />
             <mxPoint x="895" y="715" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="840" y="638" />
-              <mxPoint x="840" y="748" />
+              <mxPoint x="890" y="795" />
+              <mxPoint x="890" y="748" />
             </Array>
+            <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="wMOnWl37XSj11jP713QI-23" value="RTC Chip&lt;br&gt;PCF85263AT?" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -156,169 +153,147 @@
           <mxGeometry x="1180" y="380" width="140" height="80" as="geometry" />
         </mxCell>
         <mxCell id="iLwx1BD44I-eFol4IrJl-1" value="Can we use the same battery for the RTC as the device? Maybe better practice for RTC to have dedicated batter?" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fontColor=#000000;darkOpacity=0.05;fillColor=#FFF9B2;strokeColor=none;fillStyle=solid;direction=west;gradientDirection=north;gradientColor=#FFF2A1;shadow=1;size=20;pointerEvents=1;" parent="1" vertex="1">
-          <mxGeometry x="470" y="687.5" width="210" height="120" as="geometry" />
+          <mxGeometry x="455" y="810" width="210" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="oS5-IrqaI-rB1DFyzgWJ-1" value="CC pins" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="535" y="608" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="l4RX27jLCcqha-cLyxC2-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="l4RX27jLCcqha-cLyxC2-1" target="oS5-IrqaI-rB1DFyzgWJ-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l4RX27jLCcqha-cLyxC2-1" value="USB C Controller&lt;br&gt;&lt;br&gt;TUSB320LAI &lt;br&gt;(max 5V 15W)??" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="651" y="590" width="150" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="l4RX27jLCcqha-cLyxC2-2" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="651" y="750" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wMOnWl37XSj11jP713QI-9" value="FT2232?&lt;br&gt;USB-UART bridge" style="rounded=0;whiteSpace=wrap;html=1;" parent="l4RX27jLCcqha-cLyxC2-2" vertex="1">
+          <mxGeometry width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wMOnWl37XSj11jP713QI-17" value="1" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="l4RX27jLCcqha-cLyxC2-2" vertex="1">
+          <mxGeometry x="120" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="wMOnWl37XSj11jP713QI-18" value="2" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="l4RX27jLCcqha-cLyxC2-2" vertex="1">
+          <mxGeometry x="120" y="30" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="l4RX27jLCcqha-cLyxC2-4" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="l4RX27jLCcqha-cLyxC2-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="840" y="540" as="sourcePoint" />
+            <mxPoint x="860" y="580" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="840" y="635" />
+            </Array>
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
   <diagram id="SJFi7MKumW1ktK8oSeol" name="Power path">
-    <mxGraphModel dx="1912" dy="1115" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1434" dy="836" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="m2KU7UxuGeEaF3Yhpwbi-6" value="RP2040 GPIO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" parent="1" source="m2KU7UxuGeEaF3Yhpwbi-2" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1310" y="501" as="targetPoint" />
+            <mxPoint x="1160" y="730" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="m2KU7UxuGeEaF3Yhpwbi-2" value="FET" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="1250" y="341" width="120" height="60" as="geometry" />
+          <mxGeometry x="1100" y="570" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="m2KU7UxuGeEaF3Yhpwbi-3" value="3V3_SYS" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="1380" y="340" width="60" height="30" as="geometry" />
+          <mxGeometry x="1230" y="569" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="m2KU7UxuGeEaF3Yhpwbi-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=4;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1470" y="370" as="targetPoint" />
-            <mxPoint x="1370" y="370" as="sourcePoint" />
+            <mxPoint x="1320" y="599" as="targetPoint" />
+            <mxPoint x="1220" y="599" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="m2KU7UxuGeEaF3Yhpwbi-5" value="e-ink display light" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="1470" y="340" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="m2KU7UxuGeEaF3Yhpwbi-7" value="Would we run into current issues when charging the battery at the same time as running evrything?&lt;br&gt;&lt;br&gt;- DS3-9 we&#39;ll need to put together a system power budget to see how much power in we&#39;ll need. battery charger ic will only charge with power leftover from system" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fontColor=#000000;darkOpacity=0.05;fillColor=#FFF9B2;strokeColor=none;fillStyle=solid;direction=west;gradientDirection=north;gradientColor=#FFF2A1;shadow=1;size=20;pointerEvents=1;" parent="1" vertex="1">
-          <mxGeometry x="85" y="570" width="220" height="190" as="geometry" />
+          <mxGeometry x="1320" y="569" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="iQKmC827vp9OKKHtGp0N-1" value="Switch to turn off completely?&lt;br&gt;&lt;br&gt;-DS3-9 we could use a fet as drawn, or efuse such as&amp;nbsp;TPS1641" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fontColor=#000000;darkOpacity=0.05;fillColor=#FFF9B2;strokeColor=none;fillStyle=solid;direction=west;gradientDirection=north;gradientColor=#FFF2A1;shadow=1;size=20;pointerEvents=1;" parent="1" vertex="1">
-          <mxGeometry x="90" y="820" width="210" height="100" as="geometry" />
+          <mxGeometry x="1080" y="429" width="210" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;fillColor=#1ba1e2;strokeColor=#006EAF;strokeWidth=4;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="rpv0lTNpwyjbtqdsIo0O-7">
+        <mxCell id="rpv0lTNpwyjbtqdsIo0O-9" value="Rechargeable battery" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="1" vertex="1">
+          <mxGeometry x="860" y="419" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="rpv0lTNpwyjbtqdsIo0O-10" value="5V0_USB" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="430" y="499" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="B2Z4U4Auu6Q-buPCFHNi-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="rpv0lTNpwyjbtqdsIo0O-11" target="B2Z4U4Auu6Q-buPCFHNi-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rpv0lTNpwyjbtqdsIo0O-11" value="USB C Controller&lt;br&gt;&lt;br&gt;TPS25750 &lt;br&gt;(max 20V 100W)&lt;br&gt;&amp;nbsp;or&amp;nbsp;&lt;br&gt;TUSB320LAI &lt;br&gt;(max 5V 15W)&lt;br&gt;&lt;br&gt;?&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="570" y="599" width="150" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="rpv0lTNpwyjbtqdsIo0O-12" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="240" y="509" width="140" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="rpv0lTNpwyjbtqdsIo0O-13" value="&amp;nbsp; &amp;nbsp;USB-C 2.0 &lt;br&gt;&amp;nbsp; &amp;nbsp;Receptacle" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="rpv0lTNpwyjbtqdsIo0O-12" vertex="1">
+          <mxGeometry width="140" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="rpv0lTNpwyjbtqdsIo0O-14" value="VBUS" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="rpv0lTNpwyjbtqdsIo0O-12" vertex="1">
+          <mxGeometry x="100" y="10" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="B2Z4U4Auu6Q-buPCFHNi-3" value="CC pins" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="rpv0lTNpwyjbtqdsIo0O-12">
+          <mxGeometry x="100" y="91" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rpv0lTNpwyjbtqdsIo0O-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fillColor=#a20025;strokeColor=default;strokeWidth=4;endArrow=none;endFill=0;" parent="1" target="rpv0lTNpwyjbtqdsIo0O-9" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="595" y="688" as="sourcePoint" />
-            <mxPoint x="830" y="808.75" as="targetPoint" />
+            <mxPoint x="910" y="529" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rpv0lTNpwyjbtqdsIo0O-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=4;fillColor=#fa6800;strokeColor=#C73500;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1100" y="593.5" as="targetPoint" />
+            <mxPoint x="1000" y="593.5" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rpv0lTNpwyjbtqdsIo0O-19" value="3V3" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="1010" y="559" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rpv0lTNpwyjbtqdsIo0O-21" value="Flexible USB C Solution &lt;br&gt;(max 15W or 100W)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=23;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="290" y="369" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="rpv0lTNpwyjbtqdsIo0O-23" value="Powerpath PMIC with battery changer or BAT charger with separate switcher&lt;br&gt;&lt;br&gt;LTC3553??&lt;div&gt;LTC3559??&lt;/div&gt;&lt;div&gt;BQ2407x+reg?&lt;br&gt;&lt;/div&gt;&lt;div&gt;MP2650+reg?MP2625B+reg?&lt;br&gt;&lt;/div&gt;&lt;div&gt;bq24070 +reg?&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="820" y="529" width="180" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="B2Z4U4Auu6Q-buPCFHNi-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=4;fillColor=#1ba1e2;strokeColor=#006EAF;" edge="1" parent="1" source="rpv0lTNpwyjbtqdsIo0O-14" target="rpv0lTNpwyjbtqdsIo0O-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B2Z4U4Auu6Q-buPCFHNi-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fillColor=#1ba1e2;strokeColor=#006EAF;strokeWidth=4;" edge="1" parent="1" source="rpv0lTNpwyjbtqdsIo0O-14" target="rpv0lTNpwyjbtqdsIo0O-23">
+          <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="680" y="780" />
-              <mxPoint x="680" y="809" />
+              <mxPoint x="760" y="539" />
+              <mxPoint x="760" y="604" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-2" value="5V0_USB" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="710" y="780" width="60" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-3" value="3V3_SYS" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="1020" y="780" width="60" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=4;fillColor=#fa6800;strokeColor=#C73500;" edge="1" parent="1">
+        <mxCell id="1LWl4eUKaCGVvp_KK_CE-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=4;fillColor=#fa6800;strokeColor=#C73500;" edge="1" parent="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1110" y="810" as="targetPoint" />
-            <mxPoint x="1010" y="810" as="sourcePoint" />
+            <mxPoint x="1100" y="654.5" as="targetPoint" />
+            <mxPoint x="1000" y="654.5" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-5" value="" style="group" vertex="1" connectable="0" parent="1">
-          <mxGeometry x="500" y="750" width="140" height="60" as="geometry" />
+        <mxCell id="1LWl4eUKaCGVvp_KK_CE-2" value="RP2040 VCORE" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="620" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-6" value="&amp;nbsp; &amp;nbsp;USB-C 2.0 &lt;br&gt;&amp;nbsp; &amp;nbsp;Receptacle" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="rpv0lTNpwyjbtqdsIo0O-5">
-          <mxGeometry width="140" height="60" as="geometry" />
+        <mxCell id="5FBKAM7W0nfiTZbKcKpQ-1" value="DS3-10 - Provisionally proceeding with the TUSB320LAI, should give us plenty of power. I don&#39;t see much of a use case for heavy duty 20V chargers being used&amp;nbsp;&lt;span style=&quot;color: rgba(0, 0, 0, 0); font-family: monospace; font-size: 0px; text-align: start; text-wrap: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22Switch%20to%20turn%20off%20completely%3F%26lt%3Bbr%26gt%3B%26lt%3Bbr%26gt%3B-DS3-9%20we%20could%20use%20a%20fet%20as%20drawn%2C%20or%20efuse%20such%20as%26amp%3Bnbsp%3BTPS1641%22%20style%3D%22shape%3Dnote%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BbackgroundOutline%3D1%3BfontColor%3D%23000000%3BdarkOpacity%3D0.05%3BfillColor%3D%23FFF9B2%3BstrokeColor%3Dnone%3BfillStyle%3Dsolid%3Bdirection%3Dwest%3BgradientDirection%3Dnorth%3BgradientColor%3D%23FFF2A1%3Bshadow%3D1%3Bsize%3D20%3BpointerEvents%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%221170%22%20y%3D%22429%22%20width%3D%22210%22%20height%3D%22100%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3ETUSB320LAI&amp;nbsp;&lt;/span&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fontColor=#000000;darkOpacity=0.05;fillColor=#FFF9B2;strokeColor=none;fillStyle=solid;direction=west;gradientDirection=north;gradientColor=#FFF2A1;shadow=1;size=20;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="770" width="210" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-7" value="VBUS" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="rpv0lTNpwyjbtqdsIo0O-5">
-          <mxGeometry x="100" y="10" width="40" height="40" as="geometry" />
+        <mxCell id="BfyFjGxNhzxE-Fxs2vfW-1" value="DS3-10 - Provisionally proceeding with the LTC3553, looks like a cool part&amp;nbsp;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;exact PN for ordering depends on battery chemistry and voltage&lt;span style=&quot;color: rgba(0, 0, 0, 0); font-family: monospace; font-size: 0px; text-align: start; text-wrap: nowrap; background-color: initial;&quot;&gt;actex%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22Switch%20to%20turn%20off%20completely%3F%26lt%3Bbr%26gt%3B%26lt%3Bbr%26gt%3B-DS3-9%20we%20could%20use%20a%20fet%20as%20drawn%2C%20or%20efuse%20such%20as%26amp%3Bnbsp%3BTPS1641%22%20style%3D%22shape%3Dnote%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BbackgroundOutline%3D1%3BfontColor%3D%23000000%3BdarkOpacity%3D0.05%3BfillColor%3D%23FFF9B2%3BstrokeColor%3Dnone%3BfillStyle%3Dsolid%3Bdirection%3Dwest%3BgradientDirection%3Dnorth%3BgradientColor%3D%23FFF2A1%3Bshadow%3D1%3Bsize%3D20%3BpointerEvents%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%221170%22%20y%3D%22429%22%20width%3D%22210%22%20height%3D%22100%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3ETUSB320LAI&amp;nbsp;&lt;/span&gt;&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fontColor=#000000;darkOpacity=0.05;fillColor=#FFF9B2;strokeColor=none;fillStyle=solid;direction=west;gradientDirection=north;gradientColor=#FFF2A1;shadow=1;size=20;pointerEvents=1;" vertex="1" parent="1">
+          <mxGeometry x="805" y="710" width="210" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;strokeWidth=4;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="rpv0lTNpwyjbtqdsIo0O-14" target="rpv0lTNpwyjbtqdsIo0O-11">
+        <mxCell id="irhqpKGo-c0HOlRqMKZm-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=4;fillColor=#fa6800;strokeColor=#C73500;" edge="1" parent="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="485" y="208" as="sourcePoint" />
-            <mxPoint x="680" y="330" as="targetPoint" />
-            <Array as="points">
-              <mxPoint x="680" y="300" />
-              <mxPoint x="680" y="345" />
-            </Array>
+            <mxPoint x="570" y="734.5" as="targetPoint" />
+            <mxPoint x="470" y="734.5" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-9" value="Rechargeable battery" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="1010" y="190" width="100" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-10" value="5V0_USB" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="580" y="270" width="60" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-11" value="USB C Controller&lt;br&gt;&lt;br&gt;TPS25750 &lt;br&gt;(max 20V 100W)&lt;br&gt;&amp;nbsp;or&amp;nbsp;&lt;br&gt;TUSB320LAI &lt;br&gt;(max 5V 15W)&lt;br&gt;&lt;br&gt;?&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="720" y="270" width="150" height="150" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-12" value="" style="group" vertex="1" connectable="0" parent="1">
-          <mxGeometry x="390" y="270" width="140" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-13" value="&amp;nbsp; &amp;nbsp;USB-C 2.0 &lt;br&gt;&amp;nbsp; &amp;nbsp;Receptacle" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="rpv0lTNpwyjbtqdsIo0O-12">
-          <mxGeometry width="140" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-14" value="VBUS" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="rpv0lTNpwyjbtqdsIo0O-12">
-          <mxGeometry x="100" y="10" width="40" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=4;fillColor=#60a917;strokeColor=#2D7600;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="970" y="350" as="targetPoint" />
-            <mxPoint x="870" y="350" as="sourcePoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-16" value="VBUS out" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="880" y="320" width="60" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fillColor=#a20025;strokeColor=default;strokeWidth=4;endArrow=none;endFill=0;" edge="1" parent="1" target="rpv0lTNpwyjbtqdsIo0O-9">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1060" y="300" as="sourcePoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=4;fillColor=#fa6800;strokeColor=#C73500;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1250" y="364.5" as="targetPoint" />
-            <mxPoint x="1150" y="364.5" as="sourcePoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-19" value="3V3" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="1160" y="330" width="60" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-20" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" edge="1" parent="1">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="180" y="550" as="sourcePoint" />
-            <mxPoint x="1580" y="550" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-21" value="Flexible USB C Solution &lt;br&gt;(max 15W or 100W)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=23;fontStyle=1" vertex="1" parent="1">
-          <mxGeometry x="440" y="140" width="260" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-22" value="500mA USB 2.0 Solution (2.5W)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=23;fontStyle=1" vertex="1" parent="1">
-          <mxGeometry x="440" y="600" width="260" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-23" value="Powerpath PMIC with battery changer or BAT charger with separate switcher&lt;br&gt;&lt;br&gt;LTC3553??&lt;div&gt;LTC3559??&lt;/div&gt;&lt;div&gt;BQ2407x+reg?&lt;br&gt;&lt;/div&gt;&lt;div&gt;MP2650+reg?MP2625B+reg?&lt;br&gt;&lt;/div&gt;&lt;div&gt;bq24070 +reg?&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="970" y="300" width="180" height="150" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-24" value="Powerpath PMIC with battery changer or BAT charger with separate switcher&lt;br&gt;&lt;br&gt;LTC3553??&lt;div&gt;LTC3559??&lt;/div&gt;&lt;div&gt;BQ2407x+reg?&lt;br&gt;&lt;/div&gt;&lt;div&gt;MP2650+reg?MP2625B+reg?&lt;br&gt;&lt;/div&gt;&lt;div&gt;bq24070 +reg?&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="830" y="740" width="180" height="150" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-25" value="Rechargeable battery" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="870" y="630" width="100" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fillColor=#a20025;strokeColor=default;strokeWidth=4;endArrow=none;endFill=0;" edge="1" parent="1" target="rpv0lTNpwyjbtqdsIo0O-25">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="920" y="740" as="sourcePoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-27" value="RP2040 GPIO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="rpv0lTNpwyjbtqdsIo0O-28">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1170" y="941" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-28" value="FET" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="1110" y="781" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-29" value="3V3_SYS" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="1240" y="780" width="60" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=4;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1330" y="810" as="targetPoint" />
-            <mxPoint x="1230" y="810" as="sourcePoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="rpv0lTNpwyjbtqdsIo0O-31" value="e-ink display light" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="1330" y="780" width="120" height="60" as="geometry" />
+        <mxCell id="irhqpKGo-c0HOlRqMKZm-2" value="3V3" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="480" y="700" width="60" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
