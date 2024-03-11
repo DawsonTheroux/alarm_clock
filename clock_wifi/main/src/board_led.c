@@ -28,4 +28,39 @@ void configure_led(void)
     gpio_set_direction(BOARD_LED_R, GPIO_MODE_OUTPUT);
     gpio_set_direction(BOARD_LED_G, GPIO_MODE_OUTPUT);
     gpio_set_direction(BOARD_LED_B, GPIO_MODE_OUTPUT);
+    set_led_status(-2);
+}
+
+void set_led_status(int status_number)
+{
+  /* 
+   * Set the LED based on status 
+   * Status:
+   *  1 = Success
+   *  0 = Pending
+   *  -1 = Failure
+  */
+  switch(status_number)
+  {
+    case 1: // Success (green)
+      gpio_set_level(BOARD_LED_R, 0);
+      gpio_set_level(BOARD_LED_G, 1);
+      gpio_set_level(BOARD_LED_B, 0);
+      break;
+    case -1: // Failure (red)
+      gpio_set_level(BOARD_LED_R, 1);
+      gpio_set_level(BOARD_LED_G, 0);
+      gpio_set_level(BOARD_LED_B, 0);
+      break;
+    case 0: // Pending (yellow)
+      gpio_set_level(BOARD_LED_R, 1);
+      gpio_set_level(BOARD_LED_G, 1);
+      gpio_set_level(BOARD_LED_B, 0);
+      break;
+    default: // default (off)
+      gpio_set_level(BOARD_LED_R, 0);
+      gpio_set_level(BOARD_LED_G, 0);
+      gpio_set_level(BOARD_LED_B, 0);
+      break;
+  }
 }

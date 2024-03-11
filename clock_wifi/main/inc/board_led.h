@@ -9,5 +9,6 @@
 
 void blink_led(void);
 void configure_led(void);
+void set_led_status(int status_number);
 
 #endif

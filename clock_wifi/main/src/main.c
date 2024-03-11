@@ -40,6 +40,9 @@ void app_main(void)
     configure_led();
     configure_nvs();
     wifi_init_sta();
+    ESP_LOGI(TAG, "After WIFI Setup");
+    get_current_time(NULL);
+    blink_led();
 }
 
 

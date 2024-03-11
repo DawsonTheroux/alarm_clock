@@ -10,5 +10,8 @@
 #define WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WPA2_PSK
 
 void wifi_init_sta(void);
+void get_current_time(void *pvParameters);
+// void http_get_request(char* request);
+
 
 #endif 
