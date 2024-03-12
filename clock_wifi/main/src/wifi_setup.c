@@ -3,6 +3,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
+#include "esp_task_wdt.h"
 #include "esp_system.h"
 #include "esp_mac.h"
 #include "esp_wifi.h"
@@ -28,6 +29,12 @@ static EventGroupHandle_t s_wifi_event_group;
 static int s_retry_num = 0;
 
 
+/* event_handler
+ *
+ * Wifi event handler funciton that will attempt reconnect 5 times.
+ * This function will set LED status based on based on the result
+ * of the wifi event
+ */
 static void event_handler(void* arg, esp_event_base_t event_base,
                                 int32_t event_id, void* event_data)
 {
@@ -38,8 +45,10 @@ static void event_handler(void* arg, esp_event_base_t event_base,
             esp_wifi_connect();
             s_retry_num++;
             ESP_LOGI(TAG, "retry to connect to the AP");
+            set_led_status(PENDING);
         } else {
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
+            set_led_status(FAIL);
         }
         ESP_LOGI(TAG,"connect to the AP fail");
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
@@ -47,12 +56,39 @@ static void event_handler(void* arg, esp_event_base_t event_base,
         ESP_LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
         s_retry_num = 0;
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+        set_led_status(SUCCESS);
     }
 }
 
-void wifi_init_sta(void)
+/* Initialize Wi-Fi as sta and set scan method */
+/* Returns 0 if the AP is found, returns -1 if it is not found */
+int8_t wifi_scan(void)
 {
-    set_led_status(0);
+    uint16_t number = DEFAULT_SCAN_LIST_SIZE;
+    wifi_ap_record_t ap_info[DEFAULT_SCAN_LIST_SIZE];
+    uint16_t ap_count = 0;
+    memset(ap_info, 0, sizeof(ap_info));
+
+    ESP_ERROR_CHECK(esp_wifi_start());
+    esp_wifi_scan_start(NULL, true);
+    ESP_LOGI(TAG, "Max AP number ap_info can hold = %u", number);
+    ESP_ERROR_CHECK(esp_wifi_scan_get_ap_records(&number, ap_info));
+    ESP_ERROR_CHECK(esp_wifi_scan_get_ap_num(&ap_count));
+    ESP_LOGI(TAG, "Total APs scanned = %u, actual AP number ap_info holds = %u", ap_count, number);
+    for (int i = 0; i < number; i++) {
+        if(strcmp((char*)ap_info[i].ssid, WIFI_SSID) == 0){
+        // if(true){
+            ESP_LOGI(TAG, "REFOUND WIFI %s", WIFI_SSID);
+            return 0;
+        }
+    }
+    ESP_LOGI(TAG, "Wifi with %s not found...", WIFI_SSID);
+    return -1;
+
+}
+
+void wifi_init_sta(void* args)
+{
     s_wifi_event_group = xEventGroupCreate();
 
     ESP_ERROR_CHECK(esp_netif_init());
@@ -87,7 +123,7 @@ void wifi_init_sta(void)
     };
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
-    ESP_ERROR_CHECK(esp_wifi_start() );
+    ESP_ERROR_CHECK(esp_wifi_start());
 
     ESP_LOGI(TAG, "wifi_init_sta finished.");
 
@@ -104,18 +140,25 @@ void wifi_init_sta(void)
     if (bits & WIFI_CONNECTED_BIT) {
         ESP_LOGI(TAG, "connected to ap SSID:%s password:%s",
                  WIFI_SSID, WIFI_PASSWORD);
-        set_led_status(1);
     } else if (bits & WIFI_FAIL_BIT) {
         ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s",
                  WIFI_SSID, WIFI_PASSWORD);
-        set_led_status(-1);
     } else {
         ESP_LOGE(TAG, "UNEXPECTED EVENT");
-        set_led_status(-1);
+        set_led_status(FAIL);
+    }
+    for(;;){
+      EventBits_t bits = xEventGroupGetBits(s_wifi_event_group);
+      if(bits & WIFI_FAIL_BIT && wifi_scan() == 0)
+      {
+        ESP_LOGI(TAG, "Found AP...attempting connect");
+        xEventGroupClearBits(s_wifi_event_group, WIFI_FAIL_BIT | WIFI_CONNECTED_BIT);
+        esp_wifi_connect();
+      }
+      // Delay for 1 second.
+      vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
-
-
 
 
 static void http_get_request(char* request, char* web_server, char* port)
@@ -168,7 +211,7 @@ static void http_get_request(char* request, char* web_server, char* port)
         close(s);
         vTaskDelay(4000 / portTICK_PERIOD_MS);
         return;
-    }
+   }
     ESP_LOGI(TAG, "... socket send success");
 
     struct timeval receiving_timeout;
@@ -194,10 +237,6 @@ static void http_get_request(char* request, char* web_server, char* port)
 
     ESP_LOGI(TAG, "... done reading from socket. Last read return=%d errno=%d.", r, errno);
     close(s);
-    for(int countdown = 10; countdown >= 0; countdown--) {
-        ESP_LOGI(TAG, "%d... ", countdown);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
 }
 
 void get_current_time(void *pvParameters)

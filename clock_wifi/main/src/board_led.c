@@ -8,16 +8,12 @@
 #include "sdkconfig.h"
 #include "board_led.h"
 
-static uint8_t s_led_state = 0;
 static const char *TAG = "led";
 
-void blink_led(void)
-{
-    gpio_set_level(BOARD_LED_R, s_led_state);
-    gpio_set_level(BOARD_LED_G, s_led_state);
-    gpio_set_level(BOARD_LED_B, s_led_state);
-}
-
+/*
+ * Sets the GPIO pin direction for the on board
+ * LED based on the values in the header file.
+ */
 void configure_led(void)
 {
     ESP_LOGI(TAG, "Example configured to blink GPIO LED!");
@@ -31,36 +27,38 @@ void configure_led(void)
     set_led_status(-2);
 }
 
-void set_led_status(int status_number)
+/*
+ * Sets the state of the LED on the dev board based
+ * led status.
+ *
+ * SUCCESS: green
+ * PENDING: yellow
+ * FAIL:    red
+ * defualt: off
+ */
+void set_led_status(led_state new_status)
 {
-  /* 
-   * Set the LED based on status 
-   * Status:
-   *  1 = Success
-   *  0 = Pending
-   *  -1 = Failure
-  */
-  switch(status_number)
+  switch (new_status)
   {
-    case 1: // Success (green)
-      gpio_set_level(BOARD_LED_R, 0);
-      gpio_set_level(BOARD_LED_G, 1);
-      gpio_set_level(BOARD_LED_B, 0);
-      break;
-    case -1: // Failure (red)
+    case SUCCESS: // Success (green)
       gpio_set_level(BOARD_LED_R, 1);
       gpio_set_level(BOARD_LED_G, 0);
-      gpio_set_level(BOARD_LED_B, 0);
+      gpio_set_level(BOARD_LED_B, 1);
       break;
-    case 0: // Pending (yellow)
-      gpio_set_level(BOARD_LED_R, 1);
+    case FAIL:    // Failure (red)
+      gpio_set_level(BOARD_LED_R, 0);
       gpio_set_level(BOARD_LED_G, 1);
-      gpio_set_level(BOARD_LED_B, 0);
+      gpio_set_level(BOARD_LED_B, 1);
       break;
-    default: // default (off)
+    case PENDING: // Pending (yellow)
       gpio_set_level(BOARD_LED_R, 0);
       gpio_set_level(BOARD_LED_G, 0);
-      gpio_set_level(BOARD_LED_B, 0);
+      gpio_set_level(BOARD_LED_B, 1);
+      break;
+    default:      // default (off)
+      gpio_set_level(BOARD_LED_R, 1);
+      gpio_set_level(BOARD_LED_G, 1);
+      gpio_set_level(BOARD_LED_B, 1);
       break;
   }
 }

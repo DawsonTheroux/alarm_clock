@@ -37,12 +37,19 @@ void configure_nvs()
 
 void app_main(void)
 {
+          
     configure_led();
     configure_nvs();
-    wifi_init_sta();
+    // wifi_init_sta();
+
+    TaskHandle_t wifi_task_handle;
+	  xTaskCreate(wifi_init_sta, "wifi_setup", 4096,NULL, 10, &(wifi_task_handle) );
     ESP_LOGI(TAG, "After WIFI Setup");
-    get_current_time(NULL);
-    blink_led();
+    for(;;){
+        vTaskDelay(500);
+        ESP_LOGI(TAG, "Probing for time");
+        get_current_time(NULL);
+    }
 }
 
 

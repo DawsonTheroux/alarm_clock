@@ -7,9 +7,12 @@
 #define WIFI_FAIL_BIT       BIT1
 #define WIFI_SAE_MODE       WPA3_SAE_PWE_BOTH
 
+/* The number APs to add to the list */
+#define DEFAULT_SCAN_LIST_SIZE 10
+
 #define WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WPA2_PSK
 
-void wifi_init_sta(void);
+void wifi_init_sta(void* args);
 void get_current_time(void *pvParameters);
 // void http_get_request(char* request);
 

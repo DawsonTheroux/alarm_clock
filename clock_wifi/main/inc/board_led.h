@@ -7,8 +7,14 @@
 
 #define BLINK_DELAY_MS 100
 
-void blink_led(void);
+typedef enum {
+  SUCCESS,
+  PENDING,
+  FAIL,
+  DEFAULT
+}led_state;
+
 void configure_led(void);
-void set_led_status(int status_number);
+void set_led_status(led_state);
 
 #endif
