@@ -1,0 +1,59 @@
+===RP2040 Connections===
+---------|------------|-------------------------------|
+Num Pins | Peripheral | Purpose                       |
+---------|------------|-------------------------------|
+2        | I2C0       | Main Peripheral bus + ESP32   |
+3        | SPI0       | SPI Flash                     |
+3        | SPI1       | Slave ESP32 COMs              |
+4        | UART0      | Out to USB-UART Bridge        |
+1        | PWM0       | Buzzer                        |
+4        | GPIO       | Button                        |
+1        | GPIO       | E-Ink Light                   |
+1        | GPIO       | Photoresistor                 |
+2        | GPIO       | DHT22                         |
+---------|------------|-------------------------------|
+21       | Total      |                               |
+---------|------------|-------------------------------|
+
+====================ESP32 Connections====================
+Notes: For ESP, there are many small holes that could still allow single GPIO 
+       connections back to the RP2040 for quick signaling
+-----------------\
+23 | IO0  | GPIO0 | 
+xx | IO2  | GPIO2 | We need to be careful using these
+xx | IO5  | GPIO5 | since they must be in a certain 
+18 | IO12 | MTDI  | system state at boot.
+21 | IO15 | MTDO  | 
+-----------------/
+========================================================================
+------------------------------\
+31 | IO 19 | U0CTS | UART0 CTS |    
+34 | IO 3  | U0RXD | UART0 RX  | UART0: Out to USB_UART 
+35 | IO 1  | U0TXD | UART0 TX  | **Must be these pins for programming**
+36 | IO 22 | U0RTS | UART0 RTS |
+------------------------------/
+========================================================================
+--------------------------------\
+13 | IO 14 | HSPICLK | HSPI_CLK  | HSPI - Master RP2040 COMs
+14 | IO 12 | HSPIQ   | HSPI_MISO | **Check if RP2040 can handle HSPI speeds**
+16 | IO 13 | HSPID   | HSPI_MOSI | **Double check these MISO and MOSI**
+--------------------------------/
+========================================================================
+----------------------\
+27 | IO 16 | SPI0_CLK  |
+28 | IO 17 | SPI0_MISO | SPI0 - SPI Flash
+30 | IO 18 | SPI0_MOSI | 
+----------------------/
+========================================================================
+---------------------\
+10 | IO 25 | I2C_SDA | I2C0 - Slave on main peripheral bus.
+11 | IO 26 | I2C_SCL | **ESP32 acts as slave on this bus.
+---------------------/
+========================================================================
+---------------------\
+6  | IO 29 | I2S DATA | I2S Pins 
+8  | IO 32 | I2S_SCK  | **DATA was originally GPIO 34, 
+9  | IO 33 | I2S WS   |   but that pin is input only.
+---------------------/
+
+
