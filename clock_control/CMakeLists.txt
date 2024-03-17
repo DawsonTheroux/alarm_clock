@@ -21,15 +21,21 @@ add_compile_definitions(
   portSUPPORT_SMP=1
 )
 
+
 add_executable(alarm_clock_control
     src/main.c
     src/alarm_clock.c
+    src/i2c0_setup.c
 )
+
+pico_add_extra_outputs(alarm_clock_control)
+#pico_enable_stdio_uart(alarm_clock_control 0)
 
 
 target_include_directories(alarm_clock_control PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
   include/
+  ../common/
   )
 
 
@@ -42,6 +48,7 @@ target_link_libraries(alarm_clock_control
   FreeRTOS-Kernel-Heap4
   hardware_gpio
   hardware_pio
+  hardware_i2c
 )
 
 
@@ -55,6 +62,3 @@ target_compile_definitions(alarm_clock_control PRIVATE
     portSUPPORT_SMP=1
 )
 	
-pico_add_extra_outputs(alarm_clock_control)
-pico_enable_stdio_usb(alarm_clock_control 1)
-pico_enable_stdio_uart(alarm_clock_control 0)

@@ -3,6 +3,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
+//#include "freertos/queue.h"
 #include "esp_system.h"
 #include "esp_mac.h"
 #include "esp_wifi.h"
@@ -18,6 +19,7 @@
 #include "sdkconfig.h"
 #include "board_led.h"
 #include "wifi_setup.h"
+#include "i2c_rp2040_command.h"
 #include "main.h"
 
 static const char *TAG = "main";
@@ -35,20 +37,25 @@ void configure_nvs()
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
 }
 
+//-----------------I2C Testing-----------------------------
+
 void app_main(void)
 {
-          
-    configure_led();
+    // configure_led();
     configure_nvs();
     // wifi_init_sta();
+    TaskHandle_t i2c_task_handle;
+	  xTaskCreate(i2c_task, "i2c task", 8096, NULL, 9, &(i2c_task_handle) );
 
-    TaskHandle_t wifi_task_handle;
-	  xTaskCreate(wifi_init_sta, "wifi_setup", 4096,NULL, 10, &(wifi_task_handle) );
-    ESP_LOGI(TAG, "After WIFI Setup");
+    // Wifi task to setup and connect to wifi. 
+    // TaskHandle_t wifi_task_handle;
+	  // xTaskCreate(wifi_init_sta, "wifi_setup", 4096,NULL, 10, &(wifi_task_handle) );
+    // ESP_LOGI(TAG, "After WIFI Setup");
     for(;;){
         vTaskDelay(500);
-        ESP_LOGI(TAG, "Probing for time");
-        get_current_time(NULL);
+        // Uncommend the following lines to get the current time using wifi.
+        // ESP_LOGI(TAG, "Probing for time");
+        // get_current_time(NULL);
     }
 }
 

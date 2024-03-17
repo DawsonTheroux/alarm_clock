@@ -1,19 +1,19 @@
 ===RP2040 Connections===
----------|------------|-------------------------------|
-Num Pins | Peripheral | Purpose                       |
----------|------------|-------------------------------|
-2        | I2C0       | Main Peripheral bus + ESP32   |
-3        | SPI0       | SPI Flash                     |
-3        | SPI1       | Slave ESP32 COMs              |
-4        | UART0      | Out to USB-UART Bridge        |
-1        | PWM0       | Buzzer                        |
-4        | GPIO       | Button                        |
-1        | GPIO       | E-Ink Light                   |
-1        | GPIO       | Photoresistor                 |
-2        | GPIO       | DHT22                         |
----------|------------|-------------------------------|
-21       | Total      |                               |
----------|------------|-------------------------------|
+---------|------------|----------------------------------------------|
+Num Pins | Peripheral | Purpose                                      |
+---------|------------|----------------------------------------------|
+2  6,7   | I2C0       | Main Peripheral bus + ESP32 (using default)  |
+3        | SPI0       | SPI Flash                                    |
+3        | SPI1       | Slave ESP32 COMs                             |
+4  1,2   | UART0      | Out to USB-UART Bridge      (using default)  |
+1        | PWM0       | Buzzer                                       |
+4        | GPIO       | Button                                       |
+1        | GPIO       | E-Ink Light                                  |
+1        | GPIO       | Photoresistor                                |
+2        | GPIO       | DHT22                                        |
+---------|------------|----------------------------------------------|
+21       | Total      |                                              |
+---------|------------|----------------------------------------------|
 
 ====================ESP32 Connections====================
 Notes: For ESP, there are many small holes that could still allow single GPIO 

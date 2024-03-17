@@ -45,10 +45,10 @@ static void event_handler(void* arg, esp_event_base_t event_base,
             esp_wifi_connect();
             s_retry_num++;
             ESP_LOGI(TAG, "retry to connect to the AP");
-            set_led_status(PENDING);
+            // set_led_status(PENDING);
         } else {
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
-            set_led_status(FAIL);
+            // set_led_status(FAIL);
         }
         ESP_LOGI(TAG,"connect to the AP fail");
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
@@ -56,7 +56,7 @@ static void event_handler(void* arg, esp_event_base_t event_base,
         ESP_LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
         s_retry_num = 0;
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
-        set_led_status(SUCCESS);
+        // set_led_status(SUCCESS);
     }
 }
 
@@ -145,7 +145,7 @@ void wifi_init_sta(void* args)
                  WIFI_SSID, WIFI_PASSWORD);
     } else {
         ESP_LOGE(TAG, "UNEXPECTED EVENT");
-        set_led_status(FAIL);
+        // set_led_status(FAIL);
     }
     for(;;){
       EventBits_t bits = xEventGroupGetBits(s_wifi_event_group);
