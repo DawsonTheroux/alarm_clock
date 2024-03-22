@@ -15,6 +15,25 @@ Num Pins | Peripheral | Purpose                                      |
 21       | Total      |                                              |
 ---------|------------|----------------------------------------------|
 
+Breadboard Pinout (Also probably final pinout):
+Currently, the default pins are used for all.
+UART0 (Default pins): |TX=1 (GPIO0), TX
+dev Pin | GPIO | Purpose
+--------|------|------------
+1       | 0    | UART0 TX
+2       | 1    | UART0 RX
+--------|------|------------
+SPI (RP2040 Slave)
+--------|------|------------
+21      | 16   | SPI0 RX
+24      | 18   | SPI0 SCK
+25      | 19   | SPI0 TX
+--------|------|------------
+I2C (RP2040 Master)
+--------|------|------------
+6       | 4    | I2C0 SDA
+7       | 5    | I2C0 SCL
+
 ====================ESP32 Connections====================
 Notes: For ESP, there are many small holes that could still allow single GPIO 
        connections back to the RP2040 for quick signaling
@@ -32,17 +51,17 @@ xx | IO5  | GPIO5 | since they must be in a certain
 35 | IO 1  | U0TXD | UART0 TX  | **Must be these pins for programming**
 36 | IO 22 | U0RTS | UART0 RTS |
 ------------------------------/
+
 ========================================================================
 --------------------------------\
 13 | IO 14 | HSPICLK | HSPI_CLK  | HSPI - Master RP2040 COMs
 14 | IO 12 | HSPIQ   | HSPI_MISO | **Check if RP2040 can handle HSPI speeds**
 16 | IO 13 | HSPID   | HSPI_MOSI | **Double check these MISO and MOSI**
 --------------------------------/
-========================================================================
-----------------------\
-27 | IO 16 | SPI0_CLK  |
-28 | IO 17 | SPI0_MISO | SPI0 - SPI Flash
-30 | IO 18 | SPI0_MOSI | 
+======================================================================== ----------------------\
+xx | IO 18 | SPI0_CLK  |
+xx | IO 19 | SPI0_MISO | SPI0 - SPI Flash (AKA VSPI)
+xx | IO 23 | SPI0_MOSI | CS can be 5
 ----------------------/
 ========================================================================
 ---------------------\

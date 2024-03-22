@@ -10,7 +10,8 @@
 #include "main.h"
 
 #include "alarm_clock.h"
-#include "i2c0_setup.h"
+#include "chipcomms_i2c_host.h"
+#include "chipcomms_spi_device.h"
 
 
 void setup_gpio()
@@ -38,8 +39,13 @@ int main()
     setup_peripherals();
 
     /* I2C Dummy task*/
-    TaskHandle_t i2c_dummy_task;
-	  xTaskCreate(dummy_i2c_transmit_task, "i2c0 task", configMINIMAL_STACK_SIZE, NULL, 10, &(i2c_dummy_task));
+    
+   //  TaskHandle_t i2c_dummy_task;
+	  // xTaskCreate(dummy_i2c_transmit_task, "i2c0 task", configMINIMAL_STACK_SIZE, NULL, 10, &(i2c_dummy_task));
+
+    /* I2C Dummy task*/
+    TaskHandle_t spi_dummy_task;
+	  xTaskCreate(spi_read_task, "spi task", configMINIMAL_STACK_SIZE, NULL, 10, &(spi_dummy_task));
 
     /* Alarm clock control code */
     //  TaskHandle_t clock_control_handle;

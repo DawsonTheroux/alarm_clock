@@ -7,7 +7,7 @@
 #include "driver/i2c.h"
 #include "driver/i2c_slave.h"
 #include "common_inc/common_configs.h"
-#include "i2c_rp2040_command.h"
+#include "chipcomms_i2c_device.h"
 
 
 /* TODO:

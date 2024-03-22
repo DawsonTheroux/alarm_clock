@@ -19,7 +19,8 @@
 #include "sdkconfig.h"
 #include "board_led.h"
 #include "wifi_setup.h"
-#include "i2c_rp2040_command.h"
+#include "chipcomms_i2c_device.h"
+#include "chipcomms_spi_host.h"
 #include "main.h"
 
 static const char *TAG = "main";
@@ -44,8 +45,12 @@ void app_main(void)
     // configure_led();
     configure_nvs();
     // wifi_init_sta();
+    TaskHandle_t spi_task_handle;
+
+	  xTaskCreate(spi_data_transfer_task, "SPI task", 4096, NULL, 9, &(spi_task_handle));
+
     TaskHandle_t i2c_task_handle;
-	  xTaskCreate(i2c_task, "i2c task", 8096, NULL, 9, &(i2c_task_handle) );
+	  xTaskCreate(i2c_task, "i2c task", 4096, NULL, 9, &(i2c_task_handle) );
 
     // Wifi task to setup and connect to wifi. 
     // TaskHandle_t wifi_task_handle;

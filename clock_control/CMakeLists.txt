@@ -25,7 +25,8 @@ add_compile_definitions(
 add_executable(alarm_clock_control
     src/main.c
     src/alarm_clock.c
-    src/i2c0_setup.c
+    src/chipcomms_i2c_host.c
+    src/chipcomms_spi_device.c
 )
 
 pico_add_extra_outputs(alarm_clock_control)
@@ -49,6 +50,7 @@ target_link_libraries(alarm_clock_control
   hardware_gpio
   hardware_pio
   hardware_i2c
+  hardware_spi
 )
 
 

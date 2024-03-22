@@ -6,7 +6,7 @@
 #include "task.h"
 
 #include "common_inc/common_configs.h"
-#include "i2c0_setup.h"
+#include "chipcomms_i2c_host.h"
 
 void setup_i2c0_bus()
 {
