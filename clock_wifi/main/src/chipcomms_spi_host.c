@@ -53,26 +53,34 @@ void spi_data_transfer_task(void* args)
     spi_bus_remove_device(chipcomm_spi_handle);
   }
 
-  // uint8_t tx_message[1] = {0};
+  uint8_t numbers[10] = {'0','1','2','3','4','5','6','7','8','9'};
+  uint16_t count = 0;
   for(;;){
-    char* tx_message = "Hello SPI, RP2040";
-    // printf("Sending message: %s -HEX=", tx_message);
-    // for(int i=0; i<strlen(tx_message); i++){
-      // printf("0x%02X ", tx_message[i]);
-    // }
-    // printf("\n");
-    // printf("The length of the command is: %d", strlen(tx_message)*8);
+    count++;
+    uint8_t tx_message[count + 2];
+    for(int i=0; i<count; i++)
+    {
+      tx_message[i+2] = numbers[i % 10];
+    }
+    tx_message[0] = (count & (0xFF << 8)) >> 8;
+    tx_message[1] = count & (0xFF);
+    
     spi_transaction_t hello_spi_transaction = {
       // .cmd = SPI_CMD_HELLO,
       .tx_buffer = tx_message,
       // Note: Length is in bits
-      .length = strlen(tx_message) * 8,
+      .length = (count + 2)* 8,
       // .length = 8,
     };
+    printf("Message Len: %d, Message:", count);
+    for(int i=0;i<count;i++){
+      printf("%c", tx_message[i+2]);
+    }
+    printf("\n");
     ret = spi_device_polling_transmit(chipcomm_spi_handle, &hello_spi_transaction );
     ESP_ERROR_CHECK(ret);
     // I may need to wait done after transmit.
-    vTaskDelay(100);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
 
   }
 }

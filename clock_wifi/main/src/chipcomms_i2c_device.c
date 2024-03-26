@@ -85,9 +85,9 @@ void i2c_task(void* args)
       }
       printf("\n");
       ESP_ERROR_CHECK(i2c_slave_receive(slave_handle, data_rd, DATA_LENGTH));
-    }else{
-      printf("didn't get data Printf\n");
-    }
+    }// else{
+      // printf("didn't get data Printf\n");
+    // }
     vTaskDelay(50);
   }
 }
