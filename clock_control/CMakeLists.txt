@@ -51,6 +51,7 @@ target_link_libraries(alarm_clock_control
   hardware_pio
   hardware_i2c
   hardware_spi
+  hardware_dma
 )
 
 
