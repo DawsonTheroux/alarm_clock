@@ -9,6 +9,10 @@
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "esp_log.h"
+#include "esp_netif.h"
+#include "esp_netif_sntp.h"
+#include "esp_sntp.h"
+#include "driver/spi_master.h"
 #include "nvs_flash.h"
 
 #include "lwip/err.h"
@@ -21,13 +25,15 @@
 #include "sdkconfig.h"
 #include "board_led.h"
 #include "wifi_setup.h"
+#include "chipcomms_spi_host.h"
+#include "common_inc/common_spi_configs.h"
 #include "wifi_secrets.h"
 
 
 static const char *TAG = "clock_wifi";
+static int s_wifi_retry_num = 5;
 static EventGroupHandle_t s_wifi_event_group;
-static int s_retry_num = 0;
-
+QueueHandle_t *wifi_to_spi_queue;
 
 /* event_handler
  *
@@ -41,23 +47,61 @@ static void event_handler(void* arg, esp_event_base_t event_base,
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
         esp_wifi_connect();
     } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
-        if (s_retry_num < WIFI_MAXIMUM_RETY) {
+        if (s_wifi_retry_num < WIFI_MAXIMUM_RETY) {
             esp_wifi_connect();
-            s_retry_num++;
+            s_wifi_retry_num++;
             ESP_LOGI(TAG, "retry to connect to the AP");
-            // set_led_status(PENDING);
         } else {
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
-            // set_led_status(FAIL);
         }
         ESP_LOGI(TAG,"connect to the AP fail");
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
         ESP_LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
-        s_retry_num = 0;
+        s_wifi_retry_num = 0;
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
-        // set_led_status(SUCCESS);
     }
+}
+
+void sntp_sync_callback(struct timeval *synced_time)
+{
+  // Convert the sync time to local time.
+  printf("received SNTP sync callback...sending command to SPI (RP2040)\n");
+  time_t now;
+  struct tm local_time;
+  // Allocate the SPI transaction.
+  spi_transaction_t* spi_time_tx = (spi_transaction_t*)malloc(sizeof(spi_transaction_t));
+  uint8_t* spi_tx_buffer = (uint8_t*)malloc(sizeof(uint8_t) * SPI_TIMESYNC_LEN + 2);
+  // Get the latest time.
+  time(&now);
+  localtime_r(&now, &local_time);
+  // Get the sync time in local time.
+  uint16_t current_year = local_time.tm_year + 1900;
+  uint8_t buff_iter = 0;
+  // Set the data in the SPI transaction.
+  spi_tx_buffer[buff_iter++] = (SPI_TIMESYNC_LEN & 0xFF00) >> 8;
+  spi_tx_buffer[buff_iter++] = (SPI_TIMESYNC_LEN & 0xFF);
+  printf("PSEUDO MESSAGE LEN: (1: %d), (2: %d), (total:%d)\n", spi_tx_buffer[0], spi_tx_buffer[1], (spi_tx_buffer[0] <<8) | spi_tx_buffer[1]);
+  spi_tx_buffer[buff_iter++] = SPI_CMD_TIMESYNC;
+  // Set the year.
+  spi_tx_buffer[buff_iter++] = (current_year && 0xFF00) >> 8;
+  spi_tx_buffer[buff_iter++] = (current_year && 0xFF);
+  // Month is indexed at 1 in RP2040, but zero here.
+  spi_tx_buffer[buff_iter++] = local_time.tm_mon + 1;
+  spi_tx_buffer[buff_iter++] = local_time.tm_mday;
+  // spi_tx_buffer[buff_iter++] = local_time.tm_wday;
+  spi_tx_buffer[buff_iter++] = local_time.tm_hour;
+  spi_tx_buffer[buff_iter++] = local_time.tm_min;
+  spi_tx_buffer[buff_iter++] = local_time.tm_sec;
+
+  spi_time_tx->tx_buffer = spi_tx_buffer;
+  spi_time_tx->length = (SPI_TIMESYNC_LEN + 2) * 8;
+  spi_time_tx->rx_buffer = NULL;
+  spi_time_tx->rxlength = 0;
+  spi_time_tx->flags = 0;
+  // Send the datat to SPI to get it sent out.
+  // TODO: Remove this check and put it somewhere else.
+  xQueueSend(*wifi_to_spi_queue, &spi_time_tx, pdMS_TO_TICKS(100));
 }
 
 /* Initialize Wi-Fi as sta and set scan method */
@@ -87,77 +131,109 @@ int8_t wifi_scan(void)
 
 }
 
+// TODO: Add logic for on wifi disconnect to restart SNTP
 void wifi_init_sta(void* args)
 {
-    s_wifi_event_group = xEventGroupCreate();
+  wifi_args_t* wifi_args = (wifi_args_t*)args;
+  wifi_to_spi_queue = wifi_args->spi_tx_queue;
 
-    ESP_ERROR_CHECK(esp_netif_init());
+  s_wifi_event_group = xEventGroupCreate();
+  setup_wifi();
 
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-    esp_netif_create_default_wifi_sta();
-
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-
-    esp_event_handler_instance_t instance_any_id;
-    esp_event_handler_instance_t instance_got_ip;
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
-                                                        ESP_EVENT_ANY_ID,
-                                                        &event_handler,
-                                                        NULL,
-                                                        &instance_any_id));
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
-                                                        IP_EVENT_STA_GOT_IP,
-                                                        &event_handler,
-                                                        NULL,
-                                                        &instance_got_ip));
-
-    wifi_config_t wifi_config = {
-        .sta = {
-            .ssid = WIFI_SSID,
-            .password = WIFI_PASSWORD,
-            .threshold.authmode = WIFI_SCAN_AUTH_MODE_THRESHOLD,
-            .sae_pwe_h2e = WIFI_SAE_MODE,
-            .sae_h2e_identifier = WIFI_H2E_IDENTIFIER,
-        },
-    };
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
-    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
-    ESP_ERROR_CHECK(esp_wifi_start());
-
-    ESP_LOGI(TAG, "wifi_init_sta finished.");
-
-    /* Waiting until either the connection is established (WIFI_CONNECTED_BIT) or connection failed for the maximum
-     * number of re-tries (WIFI_FAIL_BIT). The bits are set by event_handler() (see above) */
-    EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
-            WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
-            pdFALSE,
-            pdFALSE,
-            portMAX_DELAY);
-
-    /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
-     * happened. */
-    if (bits & WIFI_CONNECTED_BIT) {
-        ESP_LOGI(TAG, "connected to ap SSID:%s password:%s",
-                 WIFI_SSID, WIFI_PASSWORD);
-    } else if (bits & WIFI_FAIL_BIT) {
-        ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s",
-                 WIFI_SSID, WIFI_PASSWORD);
-    } else {
-        ESP_LOGE(TAG, "UNEXPECTED EVENT");
-        // set_led_status(FAIL);
-    }
-    for(;;){
-      EventBits_t bits = xEventGroupGetBits(s_wifi_event_group);
-      if(bits & WIFI_FAIL_BIT && wifi_scan() == 0)
-      {
-        ESP_LOGI(TAG, "Found AP...attempting connect");
-        xEventGroupClearBits(s_wifi_event_group, WIFI_FAIL_BIT | WIFI_CONNECTED_BIT);
-        esp_wifi_connect();
+  setenv("TZ", "EST+5EDT,M3.2.0/2,M11.1.0/2", 1);
+  tzset();
+  bool sntp_started = false;
+  // Set RTC timezone
+  for(;;){
+    EventBits_t bits = xEventGroupGetBits(s_wifi_event_group);
+    if(bits & WIFI_FAIL_BIT && wifi_scan() == 0)
+    {
+      ESP_LOGI(TAG, "Found AP...attempting connect");
+      xEventGroupClearBits(s_wifi_event_group, WIFI_FAIL_BIT | WIFI_CONNECTED_BIT);
+      esp_wifi_connect();
+    }else if (!sntp_started && bits & WIFI_CONNECTED_BIT){
+      start_sntp();
+      if(esp_sntp_enabled()){
+        printf("!!!SNTP snabled!!!\n");
+        sntp_started = true;
       }
-      // Delay for 1 second.
-      vTaskDelay(pdMS_TO_TICKS(1000));
     }
+    time_t now;
+    struct tm timeinfo;
+    char strtime_buf [64];
+    time(&now);
+    localtime_r(&now, &timeinfo);
+    strftime(strtime_buf, sizeof(strtime_buf), "%c", &timeinfo);
+    vTaskDelay(pdMS_TO_TICKS(100));
+  }
+}
+
+void start_sntp()
+{
+  printf("SNTP: Starting SNTP because connected\n");
+  esp_sntp_config_t sntp_config = ESP_NETIF_SNTP_DEFAULT_CONFIG("time.google.com");
+
+  esp_netif_sntp_init(&sntp_config);
+  sntp_set_time_sync_notification_cb(sntp_sync_callback);
+}
+
+void setup_wifi()
+{
+  ESP_ERROR_CHECK(esp_netif_init());
+
+  ESP_ERROR_CHECK(esp_event_loop_create_default());
+  esp_netif_create_default_wifi_sta();
+
+  wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+  ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+
+  esp_event_handler_instance_t instance_any_id;
+  esp_event_handler_instance_t instance_got_ip;
+  ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+                                                      ESP_EVENT_ANY_ID,
+                                                      &event_handler,
+                                                      NULL,
+                                                      &instance_any_id));
+  ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
+                                                      IP_EVENT_STA_GOT_IP,
+                                                      &event_handler,
+                                                      NULL,
+                                                      &instance_got_ip));
+
+  wifi_config_t wifi_config = {
+      .sta = {
+          .ssid = WIFI_SSID,
+          .password = WIFI_PASSWORD,
+          .threshold.authmode = WIFI_SCAN_AUTH_MODE_THRESHOLD,
+          .sae_pwe_h2e = WIFI_SAE_MODE,
+          .sae_h2e_identifier = WIFI_H2E_IDENTIFIER,
+      },
+  };
+  ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
+  ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
+  ESP_ERROR_CHECK(esp_wifi_start());
+
+  ESP_LOGI(TAG, "wifi_init_sta finished.");
+
+  /* Waiting until either the connection is established (WIFI_CONNECTED_BIT) or connection failed for the maximum
+   * number of re-tries (WIFI_FAIL_BIT). The bits are set by event_handler() (see above) */
+  EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
+          WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
+          pdFALSE,
+          pdFALSE,
+          portMAX_DELAY);
+
+  /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
+   * happened. */
+  if (bits & WIFI_CONNECTED_BIT) {
+      ESP_LOGI(TAG, "connected to ap SSID:%s password:%s",
+               WIFI_SSID, WIFI_PASSWORD);
+  } else if (bits & WIFI_FAIL_BIT) {
+      ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s",
+               WIFI_SSID, WIFI_PASSWORD);
+  } else {
+      ESP_LOGE(TAG, "UNEXPECTED EVENT");
+  }
 }
 
 
@@ -179,9 +255,7 @@ static void http_get_request(char* request, char* web_server, char* port)
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         return;
     }
-
     /* Code to print the resolved IP.
-
        Note: inet_ntoa is non-reentrant, look at ipaddr_ntoa_r for "real" code */
     addr = &((struct sockaddr_in *)res->ai_addr)->sin_addr;
     ESP_LOGI(TAG, "DNS lookup succeeded. IP=%s", inet_ntoa(*addr));
@@ -238,6 +312,7 @@ static void http_get_request(char* request, char* web_server, char* port)
     ESP_LOGI(TAG, "... done reading from socket. Last read return=%d errno=%d.", r, errno);
     close(s);
 }
+
 
 void get_current_time(void *pvParameters)
 {

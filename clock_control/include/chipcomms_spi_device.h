@@ -16,16 +16,18 @@ typedef struct spi_irq_data_t{
   uint8_t* spi_temp_rx_buffer;
   uint16_t current_transfer_len;
   uint dma_rx_chan;
-  // dma_channel_config* spi_rx_dma_config;
 }spi_irq_data_t;
 
-typedef struct spi_rx_data_t{
-  uint16_t data_length;
+typedef struct cc_spi_transaction_t{
   uint8_t* data;
-} spi_rx_data_t;
+  uint16_t data_length;
+} cc_spi_transaction_t;
 
+typedef struct cc_spi_args_t{
+  QueueHandle_t* time_keeper_queue;
+} cc_spi_args_t;
 
-void spi_read_task(void* args);
+void cc_spi_rx_task(void* args);
 void spi_dma_irq_handler(void);
 void spi_rx_irq_handler(void);
 
