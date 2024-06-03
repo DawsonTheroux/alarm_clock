@@ -18,18 +18,25 @@
 // #define DISPLAY_SPI_FREQ_HZ (1 * 1000 * 1000) // 1MHz
 #define DISPLAY_SPI_FREQ_HZ (1 * 1000 * 1000)
 
+static uint32_t image_size = ((DISPLAY_WIDTH % 8 == 0) ? (DISPLAY_WIDTH / 8): (DISPLAY_WIDTH / 8 + 1)) * DISPLAY_HEIGHT * 2; 
+extern uint8_t* display_buffer;
+
 void display_basic_draw();
 void init_display_gpio();
-void init_display();
-void draw_display();
+void display_init_full();
+void display_init_partial();
+void draw_full_display();
+void draw_partial_display();
 void display_reset();
 void display_send_data(uint8_t data);
 void display_send_command(uint8_t command);
 void display_wait_busy();
 void display_clear();
-void display_turn_on();
+void display_turn_on_full();
+void display_turn_on_partial();
 void display_sleep();
-void superimpose_image(uint8_t* display_buffer, uint16_t x_pos, uint16_t y_pos, uint8_t* image, uint16_t image_width, uint16_t image_height);
+void superimpose_image(uint16_t x_pos, uint16_t y_pos, uint8_t* image, uint16_t image_width, uint16_t image_height);
+void update_display_time(datetime_t new_time, bool full_update);
 
 
 static unsigned char LUT_DATA_4Gray[] = 

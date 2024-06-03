@@ -20,18 +20,20 @@ void time_keeper_task(void* args)
   setup_rtc();
   printf("Hello time keeper task\r\n");
   // Cast the args to the params
+  uint8_t previous_minute = -1;
   datetime_t current_time;
   char datetime_buf[256];
   char* datetime_str = &datetime_buf[0];
   cc_spi_transaction_t* cc_spi_transaction;
+  bool refresh_display = true;
+  bool full_update = true;
 
   for(;;){
     /* Delay for 1s */
     if(xQueueReceive(*(time_keeper_args->spi_rx_queue), &cc_spi_transaction, 100) == pdTRUE){
-      printf("Received from queue!!\r\n");
       switch(cc_spi_transaction->data[0]){
         case SPI_CMD_TIMESYNC:
-          printf("Updating RTC from SPI\r\n");
+          refresh_display = true;
           update_time_from_spi(cc_spi_transaction->data + 1);
           free(cc_spi_transaction->data);
           free(cc_spi_transaction);
@@ -46,10 +48,18 @@ void time_keeper_task(void* args)
     }
     /* Print the current time. This will probably be able to be changed later to update */
     /* the display                                                                      */
+    vTaskDelay(50 / portTICK_PERIOD_MS);
     rtc_get_datetime(&current_time);
-    datetime_to_str(datetime_str, sizeof(datetime_buf), &current_time);
-    printf("Current time is: %s\r\n", datetime_str);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    if(previous_minute != current_time.sec || refresh_display){
+      previous_minute = current_time.sec;
+      datetime_to_str(datetime_str, sizeof(datetime_buf), &current_time);
+      printf("Updating display time to %s\r\n", datetime_str);
+      update_display_time(current_time, full_update);
+      if(full_update){
+        full_update = false;
+      }
+      refresh_display = false;
+    }
   }
 }
 

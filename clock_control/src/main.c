@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "pico/stdlib.h"
+#include "pico/malloc.h"
 #include "hardware/gpio.h"
 #include "hardware/i2c.h"
 
@@ -18,16 +20,13 @@ void setup_gpio()
 {
   gpio_init(LED_PIN);
   gpio_set_dir(LED_PIN, GPIO_OUT);
-} 
-
-void display_task(void* args)
-{
-  display_basic_draw();
-  for(;;){
-    vTaskDelay(50 / portTICK_PERIOD_MS);
+  init_display_gpio();
+  display_buffer = malloc(image_size);
+  for(int i=0; i<image_size; i++){
+    display_buffer[i] = 0xFF;
   }
-
-}
+  // display_basic_draw();
+} 
 
 int main() 
 {
@@ -36,6 +35,7 @@ int main()
   stdio_init_all();
   printf("In main, getting ready to draw\r\n");
 
+  /*
   TaskHandle_t display_handle;
 	xTaskCreate(display_task,
              "display task",
@@ -43,6 +43,7 @@ int main()
              NULL,
              8, 
              &display_handle);
+             */
   
   setup_gpio();
   // setup_tasks();
@@ -80,7 +81,7 @@ int main()
   TaskHandle_t time_keeper_handle;
   xTaskCreate(time_keeper_task,
               "time keeper task",
-              configMINIMAL_STACK_SIZE,
+              4096 * 4,
               (void*)&time_keeper_args,
               TIME_KEEPER_PRIORITY,
               &time_keeper_handle);

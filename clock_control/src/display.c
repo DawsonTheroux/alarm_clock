@@ -12,6 +12,41 @@
 #include "display.h"
 #include "images.h"
 
+
+uint8_t* display_buffer;
+
+void update_display_time(datetime_t new_time, bool full_update)
+{
+  uint8_t digits[6];
+  uint32_t digit_index = 0;
+
+  digits[0] = new_time.hour / 10;
+  digits[1] = new_time.hour % 10;
+  digits[2] = new_time.min / 10;
+  digits[3] = new_time.min % 10;
+  digits[4] = new_time.sec / 10;
+  digits[5] = new_time.sec % 10; // Increment because function call happens at 58
+  for(int i=0; i<6; i++){
+    if(i % 2 == 0 && i != 0){
+      digit_index += 30;
+    }
+    superimpose_image(digit_index, 0, digit_mapping[digits[i]], 28, 48);
+    digit_index += 30;
+  }
+
+  // TODO: There is currently an issue with the partial update...
+  if(full_update){
+    printf("Doing full update\r\n");
+    display_init_full();
+    draw_full_display();
+  }else{
+    printf("doing partial update\r\n");
+    display_init_partial();
+    draw_partial_display(0, 0, 8 * 30, 48);
+  }
+  display_sleep();
+}
+
 void display_basic_draw()
 {
   uint32_t image_size = ((DISPLAY_WIDTH % 8 == 0) ? (DISPLAY_WIDTH / 8): (DISPLAY_WIDTH / 8 + 1)) * DISPLAY_HEIGHT * 2; 
@@ -19,37 +54,31 @@ void display_basic_draw()
   for(int i=0; i< image_size; i++){
     display_buffer[i] = 0x00;
   }
-
-  init_display();
-  // display_clear();
+  display_init_full();
   vTaskDelay(500 / portTICK_PERIOD_MS);
-
-  // superimpose_image(display_buffer, 0, 0, smile, 16, 16);
-  // superimpose_image(display_buffer, 3, 25, smile, 16, 16);
   int x_index = 0;
-
-  superimpose_image(display_buffer, x_index, 0, digit_zero, 28, 48);
+  superimpose_image(x_index, 0, digit_zero, 28, 48);
   x_index += 30;
-  superimpose_image(display_buffer, x_index, 0, digit_one, 28, 48);
+  superimpose_image(x_index, 0, digit_one, 28, 48);
   x_index += 30;
-  superimpose_image(display_buffer, x_index, 0, digit_two, 28, 48);
+  superimpose_image(x_index, 0, digit_two, 28, 48);
   x_index += 30;
-  superimpose_image(display_buffer, x_index, 0, digit_three, 28, 48);
+  superimpose_image(x_index, 0, digit_three, 28, 48);
   x_index += 30;
-  superimpose_image(display_buffer, x_index, 0, digit_four, 28, 48);
+  superimpose_image(x_index, 0, digit_four, 28, 48);
   x_index += 30;
-  superimpose_image(display_buffer, x_index, 0, digit_five, 28, 48);
+  superimpose_image(x_index, 0, digit_five, 28, 48);
   x_index += 30;
-  superimpose_image(display_buffer, x_index, 0, digit_six, 28, 48);
+  superimpose_image(x_index, 0, digit_six, 28, 48);
   x_index += 30;
-  superimpose_image(display_buffer, x_index, 0, digit_seven, 28, 48);
+  superimpose_image(x_index, 0, digit_seven, 28, 48);
   x_index += 30;
-  superimpose_image(display_buffer, x_index, 0, digit_eight, 28, 48);
+  superimpose_image(x_index, 0, digit_eight, 28, 48);
   x_index += 30;
-  superimpose_image(display_buffer, x_index, 0, digit_nine, 28, 48);
+  superimpose_image(x_index, 0, digit_nine, 28, 48);
   x_index += 30;
-  superimpose_image(display_buffer, x_index, 0, smile, 16, 16);
-  draw_display(display_buffer);
+  superimpose_image(x_index, 0, smile, 16, 16);
+  draw_full_display();
   free(display_buffer);
   display_sleep();
 }
@@ -81,18 +110,12 @@ void init_display_gpio()
   gpio_init(DISPLAY_BUSY);
   gpio_set_dir(DISPLAY_BUSY, GPIO_IN);
 
-  gpio_init(TEST_PIN);
-  gpio_set_dir(TEST_PIN, GPIO_OUT);
-  gpio_put(TEST_PIN, 1);
 }
 
-void init_display()
+void display_init_full()
 {
-  init_display_gpio();
-  gpio_put(TEST_PIN, 0);
   gpio_put(DISPLAY_PWR, 1);            // Turn on the display
   vTaskDelay(10 / portTICK_PERIOD_MS); // Delay for 10ms
-  gpio_put(TEST_PIN, 1);
   display_reset();                     // Hardware reset
   display_wait_busy();
   display_send_command(0x12);          // Issue software reset
@@ -113,13 +136,11 @@ void init_display()
   display_send_data(0x01);
 
   /* Set RAM X address */
-  printf("Setting x ram size \r\n");
   display_send_command(0x44);
   display_send_data(0x00);
   display_send_data(0x31);
   display_wait_busy();                  // Wait for the busy line to go low.
   /* Set RAM Y address */
-  printf("Setting y ram size \r\n");
   display_send_command(0x45);
   display_send_data(0x0f);
   display_send_data(0x01);
@@ -127,7 +148,6 @@ void init_display()
   display_send_data(0x00);
   display_wait_busy();                  // Wait for the busy line to go low.
   /* TODO: Find out what this is doing. */
-  printf("Setting 4E\r\n");
   display_send_command(0x4E);
   display_send_data(0x00);
   display_send_command(0x4F);
@@ -179,8 +199,318 @@ void init_display()
 
 }
 
-void draw_display(uint8_t *display_buffer)
+/** display_init_partial
+ *    Initialize the display in paritial update mode.
+ *    Parameters: void
+ *    Returns:    void
+ */
+void display_init_partial()
 {
+  display_reset();
+  display_wait_busy();
+  // Taking out this SW Reset command fixes a ghosting issue.
+  // The other option is to do the partial update twice.
+  // display_send_command(0x12);
+  // display_wait_busy();
+  display_send_command(0x3C);
+  display_send_data(0x80);
+}
+
+
+void draw_partial_display(uint32_t x_start, uint32_t y_start, uint32_t x_end, uint32_t y_end)
+{
+  /* NOTE: x axis must be a multiple of 4. */
+  uint32_t update_width, width1, width2, update_height;
+  uint8_t display_byte, value, temp;
+  x_start = x_start - (x_start % 4);
+  x_end = x_end + (x_end % 4);
+  uint32_t half_width = (DISPLAY_WIDTH % 16 == 0) ? (DISPLAY_WIDTH / 16) : (DISPLAY_WIDTH / 16 + 1);
+  uint32_t full_width = (DISPLAY_WIDTH % 8 == 0) ? (DISPLAY_WIDTH / 8) : (DISPLAY_WIDTH / 8 + 1);
+  update_width=((x_end - x_start) % 8 == 0)?((x_end - x_start) / 8 ):((x_end - x_start) / 8 + 1);
+  update_height= y_end - y_start;
+
+  display_send_command(0x22); 
+  display_send_data(0xc0);   
+  display_send_command(0x20); 
+  display_wait_busy(); 
+
+  display_send_command(0x11);
+  display_send_data(0x01);
+
+  display_send_command(0x91);
+  display_send_data(0x00);
+
+  // If the start is only in the right half.
+  if(x_start>395) {
+    width1 = 0;
+    width2 = update_width;
+
+    display_send_command(0xC4);							 // Set Ram X- address Start / End position
+    display_send_data((792-x_start)/8-1);     						 // XStart, POR = 00h
+    display_send_data((792-x_end)/8); //400/8-1
+    display_send_command(0xC5);	 									// Set Ram Y- address  Start / End position 
+    display_send_data((DISPLAY_HEIGHT - y_end - 1) % 256);  
+    display_send_data((DISPLAY_HEIGHT - y_end - 1) / 256);  //300-1	
+    display_send_data(DISPLAY_HEIGHT - y_start % 256);     									// YEnd L
+    display_send_data(DISPLAY_HEIGHT - y_start / 256);											// YEnd H 
+
+    display_send_command(0xCE);	 						 
+    display_send_data((792-x_start)/8-1);	
+    display_send_command(0xCF);	 
+    display_send_data((DISPLAY_HEIGHT - y_end-1)%256);  
+    display_send_data((DISPLAY_HEIGHT - y_end-1)/256); 
+
+    display_send_command(0xA4);
+    for(uint32_t i = 0; i < update_height; i++){
+      for(uint32_t j = 0; j < update_width; j++){
+        display_byte = 0x00;
+        for(uint8_t k = 0; k < 2; k++){
+          value = display_buffer[(((i + y_start) * full_width) + x_start + j - 1) * 2 + k];
+          for(uint8_t l = 0; l < 4; l++){
+            temp = value & 0x80;
+            if(temp == 0x80){
+              display_byte |= 0x01;
+            }
+
+            if(k != 1 || l != 3){
+              display_byte <<= 1;
+            }
+            value <<= 2;
+          }
+        }
+        display_send_data(display_byte);
+      }
+    }
+
+    /*
+    display_send_command(0xA6);
+    for(uint32_t i = 0; i < update_height; i++){
+      for(uint32_t j = 0; j < update_width; j++){
+        display_byte = 0x00;
+        for(uint8_t k = 0; k < 2; k++){
+          value = display_buffer[(((i + y_start) * full_width) + x_start + j - 1) * 2 + k];
+          for(uint8_t l = 0; l < 4; l++){
+            temp = value & 0x40;
+            if(temp == 0x40){
+              display_byte |= 0x01;
+            }
+            if(k != 1 || l != 3){
+            // if(k != 1){
+              display_byte <<= 1;
+            }
+            value <<= 2;
+          }
+        }
+        display_send_data(display_byte);
+      }
+    }
+    */
+  } else if(x_end<396) {
+    printf("Partial update in left half\r\n");
+    width1 = update_width;
+    width2 = 0;
+    uint32_t y_partial_start = DISPLAY_HEIGHT - y_start;
+    uint32_t y_partial_end = DISPLAY_HEIGHT - y_end;
+
+    display_send_command(0x44);	 						 // Set Ram X- address Start / End position
+    display_send_data(x_start/8);     						
+    display_send_data((x_start/8+width1)); 
+    display_send_command(0x45);	 									// Set Ram Y- address  Start / End position 
+    display_send_data(y_partial_start % 256);  
+    display_send_data(y_partial_start / 256);  
+    display_send_data(y_partial_end % 256);     									
+    display_send_data(y_partial_end / 256);											
+
+    display_send_command(0x4e);	 						 
+    display_send_data(x_start / 8);	
+    display_send_command(0x4f);	 
+    display_send_data(y_partial_start % 256);  
+    display_send_data(y_partial_start / 256); 	
+
+    display_send_command(0x24);
+    for(uint32_t i = 0; i < update_height; i++){
+      for(uint32_t j = 0; j < update_width + 1; j++){
+        display_byte = 0x00;
+        for(uint8_t k = 0; k < 2; k++){
+          value = display_buffer[(((i + y_start) * full_width) + (x_start / 8) + j) * 2 + k];
+          for(uint8_t l = 0; l < 4; l++){
+            // For some reason this needs to be a temp variable and I don't know why....
+            temp = value & 0x80;
+            if(temp == 0x80){
+              display_byte |= 0x01;
+            }
+            if(k != 1 || l != 3){
+              display_byte <<= 1;
+            }
+            value <<= 2;
+          }
+        }
+        display_send_data(display_byte);
+      }
+    }
+    /*
+    display_send_command(0x26);
+    for(uint32_t i = 0; i < update_height; i++){
+      for(uint32_t j = 0; j < update_width + 1; j++){
+        display_byte = 0x00;
+        for(uint8_t k = 0; k < 2; k++){
+          value = display_buffer[(((i + y_start) * full_width) + (x_start/8) + j) * 2 + k];
+          for(uint8_t l = 0; l < 4; l++){
+            temp = value & 0x40;
+            if(temp == 0x40){
+              display_byte |= 0x01;
+            }
+
+            if(k != 1 || l != 3){
+            // if(k != 1){
+              display_byte <<= 1;
+            }
+            value <<= 2;
+          }
+        }
+        display_send_data(display_byte);
+      }
+    }
+    */
+  } else {
+
+    // The width in the first screen
+    width1 = ((396 - x_start) % 8 == 0)?((396 - x_start) / 8 ):((396 - x_start) / 8 + 1);
+    // The width in the second screen
+    width2 = ((x_end - 395) % 8 == 0)?((x_end - 395) / 8 ):((x_end - 395) / 8 + 1);
+
+    display_send_command(0x44);	 						 // Set Ram X- address Start / End position
+    display_send_data(0x32-width1);     						
+    display_send_data(0x31); 
+    display_send_command(0x45);	 									// Set Ram Y- address  Start / End position 
+    display_send_data((y_end-1)%256);  
+    display_send_data((y_end-1)/256);  
+    display_send_data(y_start%256);     								
+    display_send_data(y_start/256);										
+
+    display_send_command(0x4e);	 						 
+    display_send_data(0x32-width1);	
+    display_send_command(0x4f);	 
+    display_send_data((y_end-1)%256);  
+    display_send_data((y_end-1)/256);
+
+    display_send_command(0x24);
+    for(uint32_t i = 0; i < update_height; i++){
+      for(uint32_t j = 0; j < width1; j++){
+        display_byte = 0x00;
+        for(uint8_t k = 0; k < 2; k++){
+          value = display_buffer[(((i + y_start) * full_width) + x_start + j) * 2 + k];
+          for(uint8_t l = 0; l < 4; l++){
+            // For some reason this needs to be a temp variable and I don't know why....
+            temp = value & 0x80;
+            if(temp == 0x80){
+              display_byte |= 0x01;
+            }
+
+            if(k != 1 || l != 3){
+              display_byte <<= 1;
+            }
+            value <<= 2;
+          }
+        }
+        display_send_data(display_byte);
+      }
+    }
+
+    /*
+    display_send_command(0x26);
+    for(uint32_t i = 0; i < update_height; i++){
+      for(uint32_t j = 0; j < width1 ; j++){
+        display_byte = 0x00;
+        for(uint8_t k = 0; k < 2; k++){
+          value = display_buffer[(((i + y_start) * full_width) + x_start + j) * 2 + k];
+          for(uint8_t l = 0; l < 4; l++){
+            temp = value & 0x40;
+            if(temp == 0x40){
+              display_byte |= 0x01;
+            }
+
+            if(k != 1 || l != 3){
+            // if(k != 1){
+              display_byte <<= 1;
+            }
+            value <<= 2;
+          }
+        }
+        display_send_data(display_byte);
+        // display_send_data(display_buffer[(i * full_width) + j]);
+      }
+    }
+    */
+    display_send_command(0xC4);							 // Set Ram X- address Start / End position
+    display_send_data(0x31);     						
+    display_send_data(0x32-width2); 
+    display_send_command(0xC5);	 									// Set Ram Y- address  Start / End position 
+    display_send_data((y_end-1)%256);  
+    display_send_data((y_end-1)/256);  
+    display_send_data(y_start%256);     									
+    display_send_data(y_start/256);											
+
+    display_send_command(0xCE);	 						 
+    display_send_data(0x31);	
+    display_send_command(0xCF);	 
+    display_send_data((y_end-1)%256);  
+    display_send_data((y_end-1)/256); 
+
+    display_send_command(0xA4);
+    for(uint32_t i = 0; i < update_height; i++){
+      for(uint32_t j = 0; j < width2; j++){
+        display_byte = 0x00;
+        for(uint8_t k = 0; k < 2; k++){
+          value = display_buffer[(((i + y_start) * full_width) + x_start + j + half_width - 1) * 2 + k];
+          for(uint8_t l = 0; l < 4; l++){
+            temp = value & 0x80;
+            if(temp == 0x80){
+              display_byte |= 0x01;
+            }
+
+            if(k != 1 || l != 3){
+              display_byte <<= 1;
+            }
+            value <<= 2;
+          }
+        }
+        display_send_data(display_byte);
+      }
+    }
+
+    /*
+    display_send_command(0xA6);
+    for(uint32_t i = 0; i < update_height; i++){
+      for(uint32_t j = 0; j < width2; j++){
+        display_byte = 0x00;
+        for(uint8_t k = 0; k < 2; k++){
+          value = display_buffer[(((i + y_start) * full_width) + x_start + j + half_width - 1) * 2 + k];
+          for(uint8_t l = 0; l < 4; l++){
+            temp = value & 0x40;
+            if(temp == 0x40){
+              display_byte |= 0x01;
+            }
+            if(k != 1 || l != 3){
+              display_byte <<= 1;
+            }
+            value <<= 2;
+          }
+        }
+        display_send_data(display_byte);
+      }
+    }
+  */
+  }
+
+  display_turn_on_partial();
+}
+
+
+
+void draw_full_display()
+{
+  uint8_t display_byte, value, temp;
   uint32_t half_width = (DISPLAY_WIDTH % 16 == 0) ? (DISPLAY_WIDTH / 16) : (DISPLAY_WIDTH / 16 + 1);
   uint32_t full_width = (DISPLAY_WIDTH % 8 == 0) ? (DISPLAY_WIDTH / 8) : (DISPLAY_WIDTH / 8 + 1);
   uint32_t height = DISPLAY_HEIGHT;
@@ -188,12 +518,12 @@ void draw_display(uint8_t *display_buffer)
   display_send_command(0x24);
   for(uint32_t i = 0; i < height; i++){
     for(uint32_t j = 0; j < half_width; j++){
-      uint8_t display_byte = 0x00;
+      display_byte = 0x00;
       for(uint8_t k = 0; k < 2; k++){
-        uint8_t value = display_buffer[((i * full_width) +j) * 2 + k];
+        value = display_buffer[((i * full_width) +j) * 2 + k];
         for(uint8_t l = 0; l < 4; l++){
           // For some reason this needs to be a temp variable and I don't know why....
-          uint8_t temp = value & 0x80;
+          temp = value & 0x80;
           if(temp == 0x80){
             display_byte |= 0x01;
           }
@@ -211,11 +541,11 @@ void draw_display(uint8_t *display_buffer)
   display_send_command(0x26);
   for(uint32_t i = 0; i < height; i++){
     for(uint32_t j = 0; j < half_width; j++){
-      uint8_t display_byte = 0x00;
+      display_byte = 0x00;
       for(uint8_t k = 0; k < 2; k++){
-        uint8_t value = display_buffer[((i * full_width) +j) * 2 + k];
+        value = display_buffer[((i * full_width) +j) * 2 + k];
         for(uint8_t l = 0; l < 4; l++){
-          uint8_t temp = value & 0x40;
+          temp = value & 0x40;
           if(temp == 0x40){
             display_byte |= 0x01;
           }
@@ -235,11 +565,11 @@ void draw_display(uint8_t *display_buffer)
   display_send_command(0xA4);
   for(uint32_t i = 0; i < height; i++){
     for(uint32_t j = 0; j < half_width; j++){
-      uint8_t display_byte = 0x00;
+      display_byte = 0x00;
       for(uint8_t k = 0; k < 2; k++){
-        uint8_t value = display_buffer[((i * full_width) + j + half_width - 1) * 2 + k];
+        value = display_buffer[((i * full_width) + j + half_width - 1) * 2 + k];
         for(uint8_t l = 0; l < 4; l++){
-          uint8_t temp = value & 0x80;
+          temp = value & 0x80;
           if(temp == 0x80){
             display_byte |= 0x01;
           }
@@ -259,11 +589,11 @@ void draw_display(uint8_t *display_buffer)
   display_send_command(0xA6);
   for(uint32_t i = 0; i < height; i++){
     for(uint32_t j = 0; j < half_width; j++){
-      uint8_t display_byte = 0x00;
+      display_byte = 0x00;
       for(uint8_t k = 0; k < 2; k++){
-        uint8_t value = display_buffer[((i * full_width) +j + half_width - 1) * 2 + k];
+        value = display_buffer[((i * full_width) +j + half_width - 1) * 2 + k];
         for(uint8_t l = 0; l < 4; l++){
-          uint8_t temp = value & 0x40;
+          temp = value & 0x40;
           if(temp == 0x40){
             display_byte |= 0x01;
           }
@@ -280,7 +610,7 @@ void draw_display(uint8_t *display_buffer)
     }
   }
 
-  display_turn_on();
+  display_turn_on_full();
 
 }
 void display_clear()
@@ -312,26 +642,36 @@ void display_clear()
       display_send_data(0x00);
   }
 
-  display_turn_on();
+  display_turn_on_full();
 }
 
 void display_reset()
 /* Toggle the display reset pin */
 {
   gpio_put(DISPLAY_RST, 1);
-  vTaskDelay(200 / portTICK_PERIOD_MS);
+  vTaskDelay(50 / portTICK_PERIOD_MS);
   gpio_put(DISPLAY_RST, 0);
   vTaskDelay(1 / portTICK_PERIOD_MS);
   gpio_put(DISPLAY_RST, 1);
-  vTaskDelay(200 / portTICK_PERIOD_MS);
+  vTaskDelay(50 / portTICK_PERIOD_MS);
 }
 
-void display_turn_on()
+void display_turn_on_full()
 {
   display_send_command(0x22);
+  // display_send_data(0xCF);
   display_send_data(0xCF);
   display_send_command(0x20);
   vTaskDelay(100 / portTICK_PERIOD_MS);
+  display_wait_busy();
+}
+
+void display_turn_on_partial()
+{
+  display_send_command(0x22);
+  display_send_data(0xFF);
+  display_send_command(0x20);
+  vTaskDelay(50 / portTICK_PERIOD_MS);
   display_wait_busy();
 }
 
@@ -367,7 +707,7 @@ void display_sleep()
   display_send_data(0x01);
 }
 
-void superimpose_image(uint8_t* display_buffer, uint16_t x_pos, uint16_t y_pos, uint8_t* image, uint16_t image_width, uint16_t image_height){
+void superimpose_image(uint16_t x_pos, uint16_t y_pos, uint8_t* image, uint16_t image_width, uint16_t image_height){
   /* Superimposes an image in the display_buffer.                        */
   /* NOTE: The origin of the display buffer is the top left of the scree */
   /* Parameters:                                                         */
@@ -375,7 +715,7 @@ void superimpose_image(uint8_t* display_buffer, uint16_t x_pos, uint16_t y_pos, 
   /*  - x_pos: The x position to insert the image int the buffer         */
   /*  - y_pos: The y position to insert the image int the buffer         */
   /*  - image: The array of image data to superimpose                    */
-  /*  - image_width: Width of the image to superimpose                   */
+  /*  - image_width: width of the image to superimpose                   */
   /*  - image_height: height of the image to superimpose                 */
 
   /* TODO: Make this function return enough information for paritial screen update */
