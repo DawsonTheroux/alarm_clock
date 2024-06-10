@@ -16,7 +16,18 @@ typedef struct cc_i2c_args_t{
   QueueHandle_t* tx_queue;
 } cc_i2c_args_t;
 
+/** setup_i2c0_bus
+ * Initializes I2C0 for Chip communications.
+ * RP2040 acts as main
+ */
 void setup_i2c0_bus();
+
+/** cc_i2c_tx_task
+ * Task that handles all I2C communication outgoing from
+ * the RP2040 into the ESP32.
+ *
+ * args is expected to be a cc_i2c_args_t object.
+ */
 void cc_i2c_tx_task(void* args);
 
 #endif

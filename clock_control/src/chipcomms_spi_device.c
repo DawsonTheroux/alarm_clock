@@ -115,6 +115,7 @@ void spi_rx_irq_handler(void)
 
 void cc_spi_rx_task(void* args)
 {
+  printf("Hello SPI task\r\n");
   cc_spi_args_t* cc_spi_args = (cc_spi_args_t*)args;
   setup_spi();
   for(;;){

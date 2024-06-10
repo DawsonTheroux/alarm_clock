@@ -30,7 +30,6 @@ void cc_i2c_tx_task(void* args)
   printf("Hello I2C task\r\n");
   cc_i2c_args_t* cc_i2c_args = (cc_i2c_args_t*)args;
   cc_i2c_transaction_t* cc_i2c_transaction;
-  printf("Hello I2C task2\r\n");
   setup_i2c0_bus();
 
   /* Wait until there is a message to transmit in the queue, */

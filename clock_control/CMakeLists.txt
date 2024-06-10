@@ -28,6 +28,7 @@ add_executable(alarm_clock_control
     src/chipcomms_spi_device.c
     src/time_keeper.c
     src/display.c
+    src/flash.c
 )
 
 pico_add_extra_outputs(alarm_clock_control)

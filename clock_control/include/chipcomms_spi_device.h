@@ -27,8 +27,26 @@ typedef struct cc_spi_args_t{
   QueueHandle_t* time_keeper_queue;
 } cc_spi_args_t;
 
+/** cc_spi_rx_task
+ * Task that handles receiving messages from
+ * the ESP32.
+ *
+ * Messages are sent to the time_keeper_queue passed
+ * as input through args using a cc_spi_args_t object.
+ */
 void cc_spi_rx_task(void* args);
+
+/** spi_dma_irq_handler
+ * Haneles the IRQ for when SPI transfer is complete.
+ * spi_rx_irq_handler initiates the DMA reception.
+ */
 void spi_dma_irq_handler(void);
+
+/** spi_rx_irq_handler
+ * Handles the IRQ for the start of a SPI transfer.
+ * Whent the transfer is complete, the spi_dma_irq_handler
+ * function is called.
+ */
 void spi_rx_irq_handler(void);
 
 #endif
