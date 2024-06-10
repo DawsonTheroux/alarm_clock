@@ -11,7 +11,10 @@
 
 // SPI COMMADNDS
 #define SPI_CMD_HELLO 0x01
+#define SPI_CMD_TIMESYNC 0x2
 
-void spi_data_transfer_task(void* args);
+// NOTE: DOES NOT INCLUDE THE LENGTH BITS, but does include command bits.
+#define SPI_TIMESYNC_LEN (1 + 7)
+
 
 #endif

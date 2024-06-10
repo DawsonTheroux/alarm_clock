@@ -1,11 +1,13 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "pico/stdlib.h"
+#include "pico/malloc.h"
 #include "hardware/gpio.h"
 #include "hardware/i2c.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "common_inc/common_configs.h"
+#include "common_inc/common_i2c_configs.h"
 #include "chipcomms_i2c_host.h"
 
 void setup_i2c0_bus()
@@ -21,30 +23,41 @@ void setup_i2c0_bus()
 #endif
 }
 
-void dummy_i2c_transmit_task(void* args)
+void cc_i2c_tx_task(void* args)
 {
-  for(;;){
-    // uart_puts(uart0, " Hello, UART!\n\r");
-    printf("Sending I2C data\n\r");
-    int i2c_result;
-    char data_to_send[4] = {0xDE, 0xAD, 0xBE, 0xEF};
-    printf("Data to send:");
-    for(int i=0; i<4; i++){
-      printf("0x%02X", data_to_send[i]);
-    }
-    printf("\r\n");
-    i2c_result = i2c_write_timeout_us(i2c_default, 
-                                      ESP32_I2C_ADDR, 
-                                      data_to_send, 
-                                      4,
-                                      false, 
-                                      1000);
+  /* !!I2C uses 1 byte for transmission length!! */
 
-    if(i2c_result == PICO_ERROR_GENERIC){
-      printf("No ACK on data\n\r");
-    }else{
-      printf("The number of bytes writted: %d\n\r", i2c_result);
+  printf("Hello I2C task\r\n");
+  cc_i2c_args_t* cc_i2c_args = (cc_i2c_args_t*)args;
+  cc_i2c_transaction_t* cc_i2c_transaction;
+  setup_i2c0_bus();
+
+  /* Wait until there is a message to transmit in the queue, */
+  /* then transmit it.                                       */
+  for(;;){
+    if(pdTRUE == xQueueReceive(*(cc_i2c_args->tx_queue), &cc_i2c_transaction, 100)){
+      printf("I2C: Sending message of len: %d\r\n", cc_i2c_transaction->buffer_len);
+      int i2c_result = i2c_write_timeout_us(i2c_default,
+                                            ESP32_I2C_ADDR,
+                                            cc_i2c_transaction->tx_buffer,
+                                            cc_i2c_transaction->buffer_len,
+                                            false, // Do not retain the line after transmit.
+                                            1000);
+
+      // If the transmission fails, try and add it back to the queue.
+      // If adding it to the queue failes, just throw it away.
+      if(i2c_result == PICO_ERROR_GENERIC){
+        printf("NO ACK ON I2C send of data with command: 0x%02X\r\n"
+               , cc_i2c_transaction->tx_buffer[0]);
+        if(xQueueSendToFront(*(cc_i2c_args->tx_queue), &cc_i2c_transaction, 10) == pdPASS){
+          // Skip the free because the i2c transaction is still in the queue.
+          continue;
+        }
+      }
+      // Free both the buffer and the transaction.
+      free(cc_i2c_transaction->tx_buffer);
+      free(cc_i2c_transaction);
     }
-    vTaskDelay(1500);
+    vTaskDelay(50 / portTICK_PERIOD_MS);
   }
 }

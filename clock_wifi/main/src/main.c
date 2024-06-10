@@ -2,6 +2,7 @@
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "freertos/queue.h"
 #include "freertos/event_groups.h"
 //#include "freertos/queue.h"
 #include "esp_system.h"
@@ -38,30 +39,34 @@ void configure_nvs()
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
 }
 
-//-----------------I2C Testing-----------------------------
-
 void app_main(void)
 {
-    // configure_led();
-    configure_nvs();
-    // wifi_init_sta();
-    TaskHandle_t spi_task_handle;
+  configure_nvs();
+  /* I don't want to dynamically allocate all the queues,     */
+  /* so instead I am putting them all in the idle task stack. */
+  cc_spi_args_t cc_spi_args;
+  wifi_args_t wifi_args;
 
-	  xTaskCreate(spi_data_transfer_task, "SPI task", 4096, NULL, 9, &(spi_task_handle));
+  QueueHandle_t spi_tx_queue = xQueueCreate(16, sizeof(spi_transaction_t*));
+  cc_spi_args.tx_queue = &spi_tx_queue;
+  wifi_args.spi_tx_queue = &spi_tx_queue;
 
-    TaskHandle_t i2c_task_handle;
-	  xTaskCreate(i2c_task, "i2c task", 4096, NULL, 9, &(i2c_task_handle) );
+  TaskHandle_t spi_task_handle;
+  //xTaskCreatePinnedToCore(cc_spi_tx_task, "SPI tx task", 4096, &cc_spi_args, 3, &(spi_task_handle), 0);
+  xTaskCreate(cc_spi_tx_task, "SPI tx task", 4096, &cc_spi_args, 3, &(spi_task_handle));
 
-    // Wifi task to setup and connect to wifi. 
-    // TaskHandle_t wifi_task_handle;
-	  // xTaskCreate(wifi_init_sta, "wifi_setup", 4096,NULL, 10, &(wifi_task_handle) );
-    // ESP_LOGI(TAG, "After WIFI Setup");
-    for(;;){
-        vTaskDelay(500);
-        // Uncommend the following lines to get the current time using wifi.
-        // ESP_LOGI(TAG, "Probing for time");
-        // get_current_time(NULL);
-    }
+  TaskHandle_t i2c_task_handle;
+  // xTaskCreatePinnedToCore(cc_i2c_rx_task, "I2C rx task", 4096, NULL, 3, &(i2c_task_handle), 0);
+  xTaskCreate(cc_i2c_rx_task, "I2C rx task", 4096, NULL, 3, &(i2c_task_handle));
+
+  // Wifi task to setup and connect to wifi. 
+  TaskHandle_t wifi_task_handle;
+  // xTaskCreatePinnedToCore(wifi_init_sta, "wifi setup + rtc", 5096, &wifi_args, 9, &(wifi_task_handle), 1);
+  xTaskCreate(wifi_init_sta, "wifi setup + rtc", 5096, &wifi_args, 9, &(wifi_task_handle));
+  
+  for(;;){
+    vTaskDelay(pdMS_TO_TICKS(200));
+  }
 }
 
 

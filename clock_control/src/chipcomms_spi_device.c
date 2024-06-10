@@ -34,7 +34,7 @@ void setup_spi()
   spi_set_format(spi_default,8, SPI_CPOL_0, SPI_CPHA_1, SPI_MSB_FIRST);
 
   // Iniaialize spi_irq_data
-  spi_irq_data.spi_rx_queue = xQueueCreate(16, sizeof(spi_rx_data_t*));
+  spi_irq_data.spi_rx_queue = xQueueCreate(16, sizeof(cc_spi_transaction_t*));
   spi_irq_data.spi_temp_rx_buffer = NULL;
   spi_irq_data.current_transfer_len = 0;
   spi_irq_data.dma_rx_chan = dma_claim_unused_channel(true);
@@ -75,7 +75,7 @@ void spi_dma_irq_handler(void)
  */
 {
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-  spi_rx_data_t* new_queue_data = (spi_rx_data_t*) malloc(sizeof(spi_rx_data_t));
+  cc_spi_transaction_t* new_queue_data = (cc_spi_transaction_t*) malloc(sizeof(cc_spi_transaction_t));
   new_queue_data->data_length = spi_irq_data.current_transfer_len;
   new_queue_data->data = spi_irq_data.spi_temp_rx_buffer;
   // Reset the values in the spi_irq_data
@@ -104,7 +104,7 @@ void spi_rx_irq_handler(void)
   uint8_t* rx_data;
   // Read the first two bytes for the data length and malloc.
   spi_read_blocking(spi_default, 0, data_parts, 2);
-  spi_irq_data.current_transfer_len = data_parts[0] << 8 | data_parts[1];
+  spi_irq_data.current_transfer_len = (data_parts[0] << 8) | data_parts[1];
   spi_irq_data.spi_temp_rx_buffer = (uint8_t*)malloc(spi_irq_data.current_transfer_len);
   // Set the DMA transfer count.
   dma_channel_set_trans_count(spi_irq_data.dma_rx_chan, spi_irq_data.current_transfer_len, false);
@@ -113,21 +113,30 @@ void spi_rx_irq_handler(void)
   portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
-void spi_read_task(void* args)
+void cc_spi_rx_task(void* args)
 {
+  printf("Hello SPI task\r\n");
+  cc_spi_args_t* cc_spi_args = (cc_spi_args_t*)args;
   setup_spi();
   for(;;){
-    spi_rx_data_t* spi_rx_data;
-    if(pdTRUE == xQueueReceive(spi_irq_data.spi_rx_queue, &spi_rx_data, portMAX_DELAY)){
-      printf("Received length: %d - Message: ", spi_rx_data->data_length);
-      //for(int i=0;i<spi_rx_data.data_length; i++)
-      for(int i=0;i<spi_rx_data->data_length; i++)
-      {
-        printf("%c", spi_rx_data->data[i]);
+    cc_spi_transaction_t* cc_spi_transaction;
+    if(pdTRUE == xQueueReceive(spi_irq_data.spi_rx_queue, &cc_spi_transaction, 100)){
+      // control the flow based on the command byte.
+      switch(cc_spi_transaction->data[0]){
+        case SPI_CMD_TIMESYNC:
+          printf("Sending to SPI\r\n");
+          // It is up to the time keeper to free the spi data now.
+          xQueueSend(*(cc_spi_args->time_keeper_queue), &cc_spi_transaction, 100);
+          break;
+        default:
+          printf("SPI received unknown command\r\n");
+          free(cc_spi_transaction->data);
+          free(cc_spi_transaction);
+          break;
       }
-      printf("\r\n");
-      free(spi_rx_data->data);
-      free(spi_rx_data);
+      // free(cc_spi_transaction->data);
+      // free(cc_spi_transaction);
     }
+    vTaskDelay(200 / portTICK_PERIOD_MS);
   }
 }

@@ -7,6 +7,12 @@
 #define HSPI_PIN_CS  15
 #define HSPI_HOST SPI2_HOST // I think this is HSPI host.
 
-void spi_data_transfer_task(void* args);
+#include "freertos/queue.h"
+
+typedef struct cc_spi_args_t{
+  QueueHandle_t* tx_queue;
+}cc_spi_args_t;
+
+void cc_spi_tx_task(void* args);
 
 #endif

@@ -16,17 +16,37 @@ typedef struct spi_irq_data_t{
   uint8_t* spi_temp_rx_buffer;
   uint16_t current_transfer_len;
   uint dma_rx_chan;
-  // dma_channel_config* spi_rx_dma_config;
 }spi_irq_data_t;
 
-typedef struct spi_rx_data_t{
-  uint16_t data_length;
+typedef struct cc_spi_transaction_t{
   uint8_t* data;
-} spi_rx_data_t;
+  uint16_t data_length;
+} cc_spi_transaction_t;
 
+typedef struct cc_spi_args_t{
+  QueueHandle_t* time_keeper_queue;
+} cc_spi_args_t;
 
-void spi_read_task(void* args);
+/** cc_spi_rx_task
+ * Task that handles receiving messages from
+ * the ESP32.
+ *
+ * Messages are sent to the time_keeper_queue passed
+ * as input through args using a cc_spi_args_t object.
+ */
+void cc_spi_rx_task(void* args);
+
+/** spi_dma_irq_handler
+ * Haneles the IRQ for when SPI transfer is complete.
+ * spi_rx_irq_handler initiates the DMA reception.
+ */
 void spi_dma_irq_handler(void);
+
+/** spi_rx_irq_handler
+ * Handles the IRQ for the start of a SPI transfer.
+ * Whent the transfer is complete, the spi_dma_irq_handler
+ * function is called.
+ */
 void spi_rx_irq_handler(void);
 
 #endif
