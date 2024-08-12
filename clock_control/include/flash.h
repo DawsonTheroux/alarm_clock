@@ -2,7 +2,7 @@
 #define FLASH_H
 
 #define FLASH_CS 2
-#define FLASH_MAX_READ_ATTEMPTS (uint16_t) 1000
+#define FLASH_MAX_READ_ATTEMPTS (uint16_t) 10000
 #define FLASH_MAX_WRITE_ATTEMPS (uint16_t) 10000
 #define SD_BLOCK_LEN 512
 #define SD_IDLE_STATUS   (uint8_t) 0x01

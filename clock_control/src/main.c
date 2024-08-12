@@ -31,7 +31,7 @@ void setup_gpio()
   // The SPI line is initialized at a slow speed until the SPI flash
   // is enabled. Once that is complete, the speed is increased to
   // SPI_FREQ_HZ
-  spi_init(spi1, 1 * 1000);
+  spi_init(spi1, 150 * 1000);
   gpio_set_function(SPI_CLK, GPIO_FUNC_SPI);
   gpio_set_function(SPI_DOUT, GPIO_FUNC_SPI);
   gpio_set_function(SPI_DIN, GPIO_FUNC_SPI);
@@ -42,10 +42,6 @@ void setup_gpio()
   init_flash_gpio();
   init_flash();
 
-  // Speed up SPI1 to full speed.
-  spi_set_baudrate(spi1, SPI_FREQ_HZ);
-  
-
   // Allocate the display buffer
   display_buffer = malloc(display_buffer_size);
   if(display_buffer == NULL){
@@ -53,11 +49,7 @@ void setup_gpio()
     return;
   }
   memset(display_buffer, 0xFF, display_buffer_size);
-  /*
-  for(int i=0; i<display_buffer_size; i++){
-    display_buffer[i] = 0xFF;
-  }
-  */
+
 } 
 
 int main() 
@@ -113,7 +105,7 @@ int main()
   TaskHandle_t time_keeper_handle;
   int returned2 = xTaskCreate(time_keeper_task,
               "time keeper task",
-              4096 * 4,
+              5000 * 4,
               (void*)&time_keeper_args,
               TIME_KEEPER_PRIORITY,
               &time_keeper_handle);

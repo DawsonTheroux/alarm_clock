@@ -1,0 +1,29 @@
+==FLASH INFORMATION==
+Total size - 1Gb = 125MB
+Reads occur in chuncks of 2048 Bytes (So ideal page size is multiple of this)
+
+==Overall File system information==
+Offsets are always in pages
+Page size: 2048 - Since 65535 * 2048 = 134MB > 125MB
+Sizes are always in bytes (To avoid unecessary allocation in the pico)
+Directories and files will be differentiated by extensions.
+  Directories will use extension 0xFFFFFF
+  Full Screen: 'FUL'
+  Icons will:  'ICN'
+  Characters:  'CHR'
+  C Structs:   'DAT'
+
+==TABLE ENTRY==
+Address       (2 Bytes): Offset in pages
+File Length   (4 Bytes): Length of the file in bytes.
+File/Dir Name (10 Bytes): 7+3 (5 bytes for the name, 3 bytes for the extention)
+
+The current directory should be the first file entry and should give the length.
+
+==Files==
+Anything that will be displayed on the screen will start with 32 bytes representing the height and the width of the image (16-bit width, 16-bit height)
+
+
+
+
+

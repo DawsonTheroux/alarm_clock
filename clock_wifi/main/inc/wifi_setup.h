@@ -1,7 +1,7 @@
 #ifndef WIFI_SETUP_H
 #define WIFI_SETUP_H
 
-#define WIFI_MAXIMUM_RETY   5
+#define WIFI_MAXIMUM_RETY   10
 #define WIFI_H2E_IDENTIFIER ""
 #define WIFI_CONNECTED_BIT  BIT0
 #define WIFI_FAIL_BIT       BIT1

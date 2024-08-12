@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pico/stdlib.h"
-#include "pico/malloc.h"
 
 #include "pico/stdlib.h"
 #include "pico/malloc.h"
@@ -10,6 +8,8 @@
 #include "hardware/dma.h"
 
 #include "FreeRTOS.h"
+
+#include "main.h"
 #include "task.h"
 #include "flash.h"
 
@@ -42,9 +42,11 @@ int init_sd_spi_mode()
   // Attempt to start the SD card with CMD0.
   while(res[0] != SD_IDLE_STATUS){
     if(++try_count >= 100){
+      printf("!!SD ERROR: 0!!\r\n");
       return -1;
     }
     if(send_recv_sd_command(sd_cmd_0, res)){
+      printf("!!SD ERROR: 1!!\r\n");
       return -1;
     }
   }
@@ -52,44 +54,51 @@ int init_sd_spi_mode()
 
   // Send CMD8
   if(send_recv_sd_command(sd_cmd_8, res)){
+    printf("!!SD ERROR: 2!!\r\n");
     return -1;
   }
   
   // Check SD_IDLE_STATUS and echo command.
   if(res[0] != SD_IDLE_STATUS || res[4] != 0xAA){
+    printf("!!SD ERROR: 3!!\r\n");
     return -1;
   }
 
   // Wait until 0x41 responds with res[0] = 0x0;
   while(res[0] != SD_READY_STATUS){
     if(command_count >= 100){
+      printf("!!SD ERROR: 4!!\r\n");
       return -1;
     }
 
     // SEND COMMAND 55
     if(send_recv_sd_command(sd_cmd_55, res)){
+      printf("!!SD ERROR: 5!!\r\n");
       return -1;
     }
     // If command 55 failed, don't send command 41.
     if(res[0] < 2){
       if(send_recv_sd_command(sd_cmd_41, res)){
+        printf("!!SD ERROR: 6!!\r\n");
         return -1;
       }
     }
     command_count++;
     vTaskDelay(5 / portTICK_PERIOD_MS);
   }
-
   if(send_recv_sd_command(sd_cmd_58, res)){
+    printf("!!SD ERROR: 7!!\r\n");
     return -1;
   }
   // Check SD_IDLE_STATUS and echo command.
   // SEND COMMAND 58
   res[1] = 0x00;
   if(send_recv_sd_command(sd_cmd_58, res)){
+    printf("!!SD ERROR: 8!!\r\n");
     return -1;
   }
   if(!(res[1] & 0x80)){
+    printf("!!SD ERROR: 9!!\r\n");
     return -1;
   }
   return 0;

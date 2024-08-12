@@ -3,16 +3,14 @@
 Num Pins | Peripheral | Purpose                                      |
 ---------|------------|----------------------------------------------|
 2  6,7   | I2C0       | Main Peripheral bus + ESP32 (using default)  |
-3        | SPI0       | SPI Flash                                    |
+5        | SPI0       | screen SPI Flash                             |
 3        | SPI1       | Slave ESP32 COMs                             |
-4  1,2   | UART0      | Out to USB-UART Bridge      (using default)  |
+2  1,2   | UART0      | Out to USB-UART Bridge      (using default)  |
 1        | PWM0       | Buzzer                                       |
 4        | GPIO       | Button                                       |
-1        | GPIO       | E-Ink Light                                  |
 1        | GPIO       | Photoresistor                                |
-2        | GPIO       | DHT22                                        |
 ---------|------------|----------------------------------------------|
-21       | Total      |                                              |
+18       | Total      |                                              |
 ---------|------------|----------------------------------------------|
 
 Breadboard Pinout (Also probably final pinout):
@@ -46,16 +44,16 @@ xx | IO5  | GPIO5 | since they must be in a certain
 -----------------/
 ========================================================================
 ------------------------------\
-31 | IO 19 | U0CTS | UART0 CTS |    
+// 31 | IO 19 | U0CTS | UART0 CTS |    
 34 | IO 3  | U0RXD | UART0 RX  | UART0: Out to USB_UART 
 35 | IO 1  | U0TXD | UART0 TX  | **Must be these pins for programming**
-36 | IO 22 | U0RTS | UART0 RTS |
+// 36 | IO 22 | U0RTS | UART0 RTS |
 ------------------------------/
 
 ========================================================================
 --------------------------------\
 13 | IO 14 | HSPICLK | HSPI_CLK  | HSPI - Master RP2040 COMs
-14 | IO 12 | HSPIQ   | HSPI_MISO | **Check if RP2040 can handle HSPI speeds**
+// 14 | IO 12 | HSPIQ   | HSPI_MISO | **Check if RP2040 can handle HSPI speeds**
 16 | IO 13 | HSPID   | HSPI_MOSI | **Double check these MISO and MOSI**
 --------------------------------/
 ======================================================================== ----------------------\

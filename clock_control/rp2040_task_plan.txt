@@ -1,0 +1,31 @@
+RP2040 FreeRTOS tasks:
+
+A note on memory allocation: memory is dynamically allocated for many of the queues.
+                             It is up to the task that is the last step in the chain
+                             to free the data.
+
+====================================================================================
+chipcomms_spi_rx_task: Handles the reception of SPI data from the ESP32
+  Function: 
+    - Blocks on the DMA RX queue until data is received.
+    - When data is received, the command number is checked to know how to distribute the
+      data to the other tasks.
+  Queues:
+    - This task will need queues to everywhere that needs data. I don't know
+      what all these queues look like yet.
+    
+====================================================================================
+chipcomms_i2c_tx_task: Handles sending data to the ESP32
+  Function:
+    - Blocks until data is received from a queue.
+    - Once data is received, it is sent out to the ESP32.
+
+  Queues:
+    - chipcomms_i2c_tx_queue: Blocks on this queue and transmits the data once it is
+                              available.
+====================================================================================
+time_master_task: Keep track of time?
+  Function:
+    - Prompt for time updates to keep internal clock in sync with 
+
+

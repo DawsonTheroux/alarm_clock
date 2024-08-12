@@ -19,12 +19,19 @@
 #define DISPLAY_WIDTH 792
 #define DISPLAY_HEIGHT 272
 
+// char *months[12] = {"January", "February", "March", "April", "May", "June", "July", "Auguest", "September", "October", "November", "December"};
+// char *weekdays[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+
 
 /* The full length of the display_buffer array. */
 static uint32_t display_buffer_size = ((DISPLAY_WIDTH % 8 == 0) ? (DISPLAY_WIDTH / 8): (DISPLAY_WIDTH / 8 + 1)) * DISPLAY_HEIGHT * 2; 
 
 /* The display buffer used by functions like draw_full_display() and draw_partial_display(). */
 extern uint8_t* display_buffer;
+
+
+void clear_display(uint16_t start_x, uint16_t start_y, uint16_t end_x, uint16_t end_y);
+void superimpose_text_on_display(uint16_t x_start, uint16_t y_start, char *text_to_display, char *file_format_string, uint16_t x_padding);
 
 /** display_basic_draw
  * Draws a test image on the display

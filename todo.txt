@@ -1,0 +1,6 @@
+Things I want to do:
+
+Setup clkfnt folder for non-4grey digits for displaying time with a fixed size and centered.
+
+Setup all other fonts for be 4 grey.
+

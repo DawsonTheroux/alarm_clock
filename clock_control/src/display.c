@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "pico/stdlib.h"
 #include "pico/malloc.h"
 
@@ -9,43 +10,38 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "display.h"
+
 #include "images.h"
+#include "fs.h"
+
+#include "display.h"
 
 
 uint8_t* display_buffer;
 
-void update_display_time(datetime_t new_time, bool full_update)
+#define DIGIT_BUFFER_SIZE 4650
+
+/*
+ * Clear a section of the display.
+ * If the start and end position are the same, then just clear the whole thing.
+ */
+void clear_display(uint16_t start_x, uint16_t start_y, uint16_t end_x, uint16_t end_y)
 {
-  uint8_t digits[6];
-  uint32_t x_offset = 40 * 8;
-  uint32_t y_offset = 120;
-  uint32_t digit_index = 0;
-
-  digits[0] = new_time.hour / 10;
-  digits[1] = new_time.hour % 10;
-  digits[2] = new_time.min / 10;
-  digits[3] = new_time.min % 10;
-  digits[4] = new_time.sec / 10;
-  digits[5] = new_time.sec % 10; // Increment because function call happens at 58
-  for(int i=0; i<6; i++){
-    if(i % 2 == 0 && i != 0){
-      digit_index += 30;
-    }
-    superimpose_image(digit_index + x_offset, 0 + y_offset, digit_mapping[digits[i]], 28, 48);
-    digit_index += 30;
+  uint32_t display_width = ((DISPLAY_WIDTH % 8 == 0) ? (DISPLAY_WIDTH / 8): (DISPLAY_WIDTH / 8 + 1)) * DISPLAY_HEIGHT * 2; 
+  uint32_t full_width = (DISPLAY_WIDTH % 4 == 0) ? (DISPLAY_WIDTH / 4) : (DISPLAY_WIDTH / 4 + 1);
+  if(start_x == end_x && start_y == end_y){
+    memset(display_buffer, 0xFF, display_width);
+    return;
   }
-
-  if(full_update){
-    display_init_full();
-    draw_full_display();
-  }else{
-    display_init_partial();
-    draw_partial_display(x_offset, y_offset, (8 * 30) + x_offset,48 + y_offset);
+  start_x = (start_x / 4);
+  end_x = (end_x / 4);
+  for(int i=0; i<end_y - start_y; i++){
+    memset(display_buffer + (((start_y + i) * full_width) + start_x), 0xFF, (end_x - start_x));
   }
-  display_sleep();
 }
 
+
+/*
 void display_basic_draw()
 {
   uint32_t image_size = ((DISPLAY_WIDTH % 8 == 0) ? (DISPLAY_WIDTH / 8): (DISPLAY_WIDTH / 8 + 1)) * DISPLAY_HEIGHT * 2; 
@@ -81,6 +77,7 @@ void display_basic_draw()
   free(display_buffer);
   display_sleep();
 }
+*/
 
 void init_display_gpio()
 {
