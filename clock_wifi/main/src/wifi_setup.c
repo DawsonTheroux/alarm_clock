@@ -15,6 +15,9 @@
 #include "driver/spi_master.h"
 #include "nvs_flash.h"
 
+#include "driver/sdspi_host.h"
+#include "flash.h"
+
 #include "lwip/err.h"
 #include "lwip/sockets.h"
 #include "lwip/sys.h"
@@ -137,6 +140,12 @@ void wifi_init_sta(void *args)
 {
   wifi_args_t* wifi_args = (wifi_args_t*)args;
   wifi_to_spi_queue = wifi_args->spi_tx_queue;
+
+  sdspi_dev_handle_t sd_handle;
+  if(initialize_sd(&sd_handle)){
+    printf("Failed to initialize the SD card\n");
+  }
+
 
   s_wifi_event_group = xEventGroupCreate();
   setup_wifi();

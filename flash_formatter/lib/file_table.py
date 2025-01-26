@@ -3,7 +3,8 @@ import struct
 import math
 from lib.font import name_char_map
 DIR_ENTRY_SIZE = 16 # address (2 bytes) + file name (10 bytes) + file length (4 bytes)
-MAX_FS_SIZE = 125 * 1000 * 1000
+# MAX_FS_SIZE = 125 * 1000 * 1000 # 1GBit
+MAX_FS_SIZE = 32 * 1000 * 1000
 
 # NOTE: This could probably be designed better. 
 #       But I think this modular approach is easily modifyable.
@@ -133,6 +134,7 @@ def generate_file_table(root_dir, page_size):
             to_visit = to_visit[1:]
         else:
             break
+    print(f"at end: {current_offset=}")
     return root_entry
 
 

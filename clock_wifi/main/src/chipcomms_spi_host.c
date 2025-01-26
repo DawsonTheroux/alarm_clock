@@ -25,7 +25,7 @@ void cc_spi_tx_task(void* args)
   };
   printf("MISO: %d, MOSI: %d, sclk: %d", HSPI_PIN_MISO, HSPI_PIN_MOSI, HSPI_PIN_CLK);
   //Initialize the SPI bus
-  ret = spi_bus_initialize(HSPI_HOST, &buscfg, SPI_DMA_CH_AUTO);
+  ret = spi_bus_initialize(HSPI_HOST, &buscfg, SPI_DMA_CH2);
   ESP_ERROR_CHECK(ret);
 
   spi_device_interface_config_t hspi_cfg = {

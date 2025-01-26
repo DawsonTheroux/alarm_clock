@@ -11,7 +11,7 @@ PSEUDO_FS = f"{OUTPUT_DIR}/pseudo_fs" # The directory that all the files should 
 DATA_DIR = "data"                             # The main data folder.
 IMAGE_DIR = f"{DATA_DIR}/images"              # The list of iamges to include.
 
-SMALL_FONT = 50
+SMALL_FONT = 35
 MED_FONT = 100
 LARGE_FONT = 200
 TIME_FONT = 250
@@ -21,7 +21,9 @@ CHAR_LIST = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890.:;,'
 FONT_SIZE = 100                                 # Use 48pt font.
 #FONT_FILE = "digital-7-mono.ttf"  # The current font to use.
 # FONT_FILE = "Roboto-Regular.ttf"  # The current font to use.
-FONT_FILE = "Gupter-Regular.ttf"  # The current font to use.
+# FONT_FILE = "Gupter-Regular.ttf"  # The current font to use.
+# FONT_FILE = "IBMPlexMono-Regular.ttf"  # The current font to use.
+FONT_FILE = "ShareTechMono-Regular.ttf"  # The current font to use.
 
 # File system settings
 PAGE_SIZE = 2048
@@ -40,15 +42,15 @@ def main():
 
     # Generate the large font.
     os.mkdir(f"{PSEUDO_FS}/lrgfnt")
-    generate_font(f"data/{FONT_FILE}", CHAR_LIST, LARGE_FONT, f"{PSEUDO_FS}/lrgfnt", False)
+    generate_font(f"data/{FONT_FILE}", CHAR_LIST, LARGE_FONT, f"{PSEUDO_FS}/lrgfnt", True)
 
     # Generate the medium font.
     os.mkdir(f"{PSEUDO_FS}/medfnt")
-    generate_font(f"data/{FONT_FILE}", CHAR_LIST, MED_FONT, f"{PSEUDO_FS}/medfnt", False)
+    generate_font(f"data/{FONT_FILE}", CHAR_LIST, MED_FONT, f"{PSEUDO_FS}/medfnt", True)
 
     # Generate the small font.
     os.mkdir(f"{PSEUDO_FS}/smlfnt")
-    generate_font(f"data/{FONT_FILE}", CHAR_LIST, SMALL_FONT, f"{PSEUDO_FS}/smlfnt", False)
+    generate_font(f"data/{FONT_FILE}", CHAR_LIST, SMALL_FONT, f"{PSEUDO_FS}/smlfnt", True)
 
     file_table = generate_file_table(PSEUDO_FS, PAGE_SIZE)
     # breakpoint()
