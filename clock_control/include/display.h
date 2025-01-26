@@ -2,13 +2,13 @@
 #define DISPLAY_H
 
 
-#define DISPLAY_PWR  15
-#define DISPLAY_BUSY 14
+/* REMOVE THIS LATER */
+#define DISPLAY_PWR  15 // Display power doesn't exist anymore
+/*********************/
+#define DISPLAY_BUSY 6
 #define DISPLAY_CS   13
-// #define DISPLAY_DC   12
 #define DISPLAY_DC 8
-// #define DISPLAY_DOUT 11
-// #define DISPLAY_CLK  10
+
 #define SPI_CLK 10
 #define SPI_DOUT 11
 #define SPI_DIN 12

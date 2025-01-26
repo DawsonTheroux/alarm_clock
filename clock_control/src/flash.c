@@ -13,8 +13,9 @@
 #include "task.h"
 #include "flash.h"
 
-// TODO: Make this wayyy faster with DMA.
-//       This way it could be a fast PICO library.
+// TODO:
+// Read the status register from the device
+// Put the device into 4-byte address mode 
 
 uint8_t dummy_value = 0xFF;
 void init_flash_gpio()
@@ -32,76 +33,198 @@ void init_flash()
   spi_write_blocking(spi1, &dummy_value, 10);
 }
 
+// static int spi_flash_write(uint8_t *buffer, 
+/* Read the status register */
+/* This is address 0x05 */
+static int spi_flash_write_read(uint8_t *write_buf, uint8_t write_len, uint8_t *response, uint8_t response_len)
+{
+	gpio_put(FLASH_CS, 0);
+  spi_write_blocking(spi1, write_buf, write_len); // Technically not right. But registers should always be one byte.
+	spi_read_blocking(spi1, dummy_value, response, response_len);
+	gpio_put(FLASH_CS, 1);
+	
+	/* DEBUG */
+	printf("---\n");
+	printf("Command: ");
+	for(int i=0; i<write_len; i++){
+			printf("%02X ", write_buf[i]);
+	}
+
+	printf("\nResponse: ");
+	for(int i=0; i<response_len; i++){
+			printf("%02X ", response[i]);
+	}
+	printf("\n---\n");
+	/* END DEBUG */
+	return 0;
+}
+
+static int spi_flash_write(uint8_t *write_buf, uint8_t msg_len)
+{
+	gpio_put(FLASH_CS, 0);
+  spi_write_blocking(spi1, write_buf, msg_len);
+	gpio_put(FLASH_CS, 1);
+	return 0;
+}
+
+static int spi_flash_page_program(uint32_t address, uint8_t *buf, uint32_t buf_len)
+{
+	// Only 256 bytes can be transfered at a time.
+	// Make this function break up the writes into 256 byte chunks.
+	uint8_t command;
+	uint8_t response;
+
+	/* Page Program */
+	command = FLASH_PP;
+	gpio_put(FLASH_CS, 0);
+  spi_write_blocking(spi1, &command, 1);
+  spi_write_blocking(spi1, buf, buf_len);
+	gpio_put(FLASH_CS, 1);
+
+	for(;;){
+		// read status register
+		command = FLASH_RDSR;
+		response = 0xFF;
+		gpio_put(FLASH_CS, 0);
+		spi_flash_write_read(&command, 1, &response, 1);
+		gpio_put(FLASH_CS, 1);
+		/* check WIP bit */
+		if(!(response & FLASH_RDSR_WIP_BIT)) {
+			printf("FLASH WRITE DONE\n");
+			break;
+		}
+		printf("FLASH WRITE IN PROGRESS\n");
+    vTaskDelay(1 / portTICK_PERIOD_MS);
+	}
+	return 0;
+}
+
+static int spi_flash_read_page(uint32_t address, uint8_t *res_buf, uint32_t buf_len)
+{
+	uint8_t command;
+	gpio_put(FLASH_CS, 0);
+	spi_write_blocking(spi1, &command, 1);
+	spi_read_blocking(spi1, dummy_value, res_buf, buf_len);
+	return 0;
+}
+
 int init_sd_spi_mode()
 {
-  uint8_t res[5];
-  uint8_t command_count = 0;
-  uint16_t try_count = 0;
-  memset(res, 0xFF, 5);
+	vTaskDelay(100 / portTICK_PERIOD_MS);
+	/* following example from Figure 29 in flash datahseet.*/
+	/* Set Write enable */
+	uint8_t write_buf[4];
+	uint8_t read_buf[4];
 
-  // Attempt to start the SD card with CMD0.
-  while(res[0] != SD_IDLE_STATUS){
-    if(++try_count >= 100){
-      printf("!!SD ERROR: 0!!\r\n");
-      return -1;
-    }
-    if(send_recv_sd_command(sd_cmd_0, res)){
-      printf("!!SD ERROR: 1!!\r\n");
-      return -1;
-    }
-  }
-  vTaskDelay(1 / portTICK_PERIOD_MS);
+	write_buf[0] = FLASH_WREN;
+	read_buf[0] = 0xFF;
+	spi_flash_write(write_buf, 1);
 
-  // Send CMD8
-  if(send_recv_sd_command(sd_cmd_8, res)){
-    printf("!!SD ERROR: 2!!\r\n");
-    return -1;
-  }
-  
-  // Check SD_IDLE_STATUS and echo command.
-  if(res[0] != SD_IDLE_STATUS || res[4] != 0xAA){
-    printf("!!SD ERROR: 3!!\r\n");
-    return -1;
-  }
+	/* read the RDSR */
+	write_buf[0] = FLASH_RDSR;
+	read_buf[0] = 0xFF;
+	spi_flash_write_read(write_buf, 1, read_buf, 1);
+	/* Check Write Enable Latch */
+	if(!(read_buf[0] & FLASH_RDSR_WEL_BIT)){
+					printf("failed to enable WEL\n");
+					return -1;
+	}
 
-  // Wait until 0x41 responds with res[0] = 0x0;
-  while(res[0] != SD_READY_STATUS){
-    if(command_count >= 100){
-      printf("!!SD ERROR: 4!!\r\n");
-      return -1;
-    }
+	write_buf[0] = 0xDE;
+	write_buf[1] = 0xAD;
+	write_buf[2] = 0xBE;
+	write_buf[3] = 0xEF;
+	spi_flash_page_program(0x0000, write_buf, 4);
 
-    // SEND COMMAND 55
-    if(send_recv_sd_command(sd_cmd_55, res)){
-      printf("!!SD ERROR: 5!!\r\n");
-      return -1;
-    }
-    // If command 55 failed, don't send command 41.
-    if(res[0] < 2){
-      if(send_recv_sd_command(sd_cmd_41, res)){
-        printf("!!SD ERROR: 6!!\r\n");
-        return -1;
-      }
-    }
-    command_count++;
-    vTaskDelay(5 / portTICK_PERIOD_MS);
-  }
-  if(send_recv_sd_command(sd_cmd_58, res)){
-    printf("!!SD ERROR: 7!!\r\n");
-    return -1;
-  }
-  // Check SD_IDLE_STATUS and echo command.
-  // SEND COMMAND 58
-  res[1] = 0x00;
-  if(send_recv_sd_command(sd_cmd_58, res)){
-    printf("!!SD ERROR: 8!!\r\n");
-    return -1;
-  }
-  if(!(res[1] & 0x80)){
-    printf("!!SD ERROR: 9!!\r\n");
-    return -1;
-  }
-  return 0;
+	spi_flash_read_page(0x0000, read_buf, 4);
+	printf("Read value: ");
+	for(int i=0; i<4; i++){
+			printf("%02X ", read_buf[i]);
+	}
+	printf("\n");
+
+
+	/*
+	cmd_buffer[0] = 0x15;
+	for(int i=0; i<2; i++){
+		res_buffer[i] = 0xFF;
+	}
+	gpio_put(FLASH_CS, 0);
+  spi_write_blocking(spi1, cmd_buffer, 1);
+	spi_read_blocking(spi1, dummy_value, res_buffer, 2);
+	printf("Command 0x%2X responded with: 0x%02X, 0x%02X\n", cmd_buffer[0], res_buffer[0], res_buffer[1]);
+
+	gpio_put(FLASH_CS, 1);
+	*/
+
+  // uint8_t res[5];
+  // uint8_t command_count = 0;
+  // uint16_t try_count = 0;
+  // memset(res, 0xFF, 5);
+
+  // // Attempt to start the SD card with CMD0.
+  // while(res[0] != SD_IDLE_STATUS){
+  //   if(++try_count >= 100){
+  //     printf("!!SD ERROR: 0!!\r\n");
+  //     return -1;
+  //   }
+  //   if(send_recv_sd_command(sd_cmd_0, res)){
+  //     printf("!!SD ERROR: 1!!\r\n");
+  //     return -1;
+  //   }
+  // }
+  // vTaskDelay(1 / portTICK_PERIOD_MS);
+
+  // // Send CMD8
+  // if(send_recv_sd_command(sd_cmd_8, res)){
+  //   printf("!!SD ERROR: 2!!\r\n");
+  //   return -1;
+  // }
+  // 
+  // // Check SD_IDLE_STATUS and echo command.
+  // if(res[0] != SD_IDLE_STATUS || res[4] != 0xAA){
+  //   printf("!!SD ERROR: 3!!\r\n");
+  //   return -1;
+  // }
+
+  // // Wait until 0x41 responds with res[0] = 0x0;
+  // while(res[0] != SD_READY_STATUS){
+  //   if(command_count >= 100){
+  //     printf("!!SD ERROR: 4!!\r\n");
+  //     return -1;
+  //   }
+
+  //   // SEND COMMAND 55
+  //   if(send_recv_sd_command(sd_cmd_55, res)){
+  //     printf("!!SD ERROR: 5!!\r\n");
+  //     return -1;
+  //   }
+  //   // If command 55 failed, don't send command 41.
+  //   if(res[0] < 2){
+  //     if(send_recv_sd_command(sd_cmd_41, res)){
+  //       printf("!!SD ERROR: 6!!\r\n");
+  //       return -1;
+  //     }
+  //   }
+  //   command_count++;
+  //   vTaskDelay(5 / portTICK_PERIOD_MS);
+  // }
+  // if(send_recv_sd_command(sd_cmd_58, res)){
+  //   printf("!!SD ERROR: 7!!\r\n");
+  //   return -1;
+  // }
+  // // Check SD_IDLE_STATUS and echo command.
+  // // SEND COMMAND 58
+  // res[1] = 0x00;
+  // if(send_recv_sd_command(sd_cmd_58, res)){
+  //   printf("!!SD ERROR: 8!!\r\n");
+  //   return -1;
+  // }
+  // if(!(res[1] & 0x80)){
+  //   printf("!!SD ERROR: 9!!\r\n");
+  //   return -1;
+  // }
+  // return 0;
 }
 
 int flash_read_block(uint32_t addr, uint8_t *buffer, uint8_t *token)

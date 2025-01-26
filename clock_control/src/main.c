@@ -12,7 +12,7 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
-#include "common_inc/common_i2c_configs.h"
+#include "common_i2c_configs.h"
 #include "main.h"
 
 #include "chipcomms_i2c_host.h"
@@ -57,15 +57,6 @@ int main()
   /* I don't want to dynamically allocate all the queues,     */
   /* so instead I am putting them all in the idle task stack. */
   stdio_init_all();
-  /*
-  TaskHandle_t display_handle;
-	xTaskCreate(display_task,
-             "display task",
-             configMINIMAL_STACK_SIZE, 
-             NULL,
-             8, 
-             &display_handle);
-             */
   
   setup_gpio();
   printf("After setup_gpio\r\n");
@@ -84,7 +75,7 @@ int main()
 
   /* Setup I2C task */
   TaskHandle_t cc_i2c_tx_handle;
-	xTaskCreate(cc_i2c_tx_task,
+        xTaskCreate(cc_i2c_tx_task,
              "chipcomms i2c tx task",
              configMINIMAL_STACK_SIZE, 
              (void*)&cc_i2c_args, 
@@ -93,14 +84,13 @@ int main()
 
   /* Setup SPI task */
   TaskHandle_t cc_spi_rx_handle;
-	int returned = xTaskCreate(cc_spi_rx_task, 
+        int returned = xTaskCreate(cc_spi_rx_task, 
              "chipcomms spi rx task", 
              configMINIMAL_STACK_SIZE, 
              (void*)&cc_spi_args, 
              CC_SPI_PRIORITY, 
              &cc_spi_rx_handle);
 
-  /* DISABLING TIME KEEPER FOR FLASH DEBUGGING */
   /* Setup time keeper task */
   TaskHandle_t time_keeper_handle;
   int returned2 = xTaskCreate(time_keeper_task,
@@ -110,16 +100,11 @@ int main()
               TIME_KEEPER_PRIORITY,
               &time_keeper_handle);
 
-  printf("returned2: %d\r\n", returned2);
-
-    
   // Start the scheduler.
   vTaskStartScheduler();
 
   for( ;; )
   {
-    printf("Hello main task\r\n");
     vTaskDelay(500 / portTICK_PERIOD_MS);
-
   }
 }

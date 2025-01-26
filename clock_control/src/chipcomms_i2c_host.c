@@ -7,7 +7,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "common_inc/common_i2c_configs.h"
+#include "common_i2c_configs.h"
 #include "chipcomms_i2c_host.h"
 
 void setup_i2c0_bus()

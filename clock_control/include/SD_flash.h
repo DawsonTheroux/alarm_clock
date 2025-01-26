@@ -10,23 +10,6 @@
 #define SD_START_TOKEN   (uint8_t) 0xFE
 #define SD_DATA_ACCEPTED (uint8_t) 0x1F
 
-/* FLASH STATUS BITS */
-#define FLASH_RDSR_WIP_BIT  0x01
-#define FLASH_RDSR_WEL_BIT  0x02
-#define FLASH_RDSR_BP0_BIT  0x04
-#define FLASH_RDSR_BP1_BIT  0x08
-#define FLASH_RDSR_BP2_BIT  0x10
-#define FLASH_RDSR_BP3_BIT  0x20
-#define FLASH_RDSR_QE_BIT   0x40
-#define FLASH_RDSR_SRWD_BIT 0x40
-
-/* FLASH COMMANDS */
-#define FLASH_PP   0x02
-#define FLASH_RDSR 0x05
-#define FLASH_WREN 0x06
-#define FLASH_CE   0x60
-
-
 
 typedef struct sd_command_t {
   uint8_t cmd;    // The command number.

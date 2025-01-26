@@ -15,7 +15,7 @@
 #include "queue.h"
 
 // Project includes.
-#include "common_inc/common_spi_configs.h"
+#include "common_spi_configs.h"
 #include "chipcomms_spi_device.h"
 #include "main.h"
 

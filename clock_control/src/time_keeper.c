@@ -13,7 +13,7 @@
 #include "task.h"
 #include "queue.h"
 
-#include "common_inc/common_spi_configs.h"
+#include "common_spi_configs.h"
 #include "chipcomms_i2c_host.h"
 #include "chipcomms_spi_device.h"
 #include "display.h"
@@ -171,9 +171,7 @@ void update_time_from_spi(uint8_t* spi_buffer_data){
     .min = spi_buffer_data[count++],
     .sec = spi_buffer_data[count++],
   };
-  // new_time.dotw = calculate_day_of_week(year, month, day);
   new_time.dotw = calculate_day_of_week(new_time.year, new_time.month, new_time.day);
-  printf("new_time.dotw: %u\r\n", new_time.dotw);
   rtc_set_datetime(&new_time);
 }
 

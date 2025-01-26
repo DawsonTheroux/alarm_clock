@@ -21,6 +21,8 @@ add_compile_definitions(
   portSUPPORT_SMP=1
 )
 
+add_compile_options(-DRP2040)
+
 
 add_executable(alarm_clock_control
     src/main.c
@@ -30,7 +32,9 @@ add_executable(alarm_clock_control
     src/display.c
     src/display_manager.c
     src/flash.c
-    src/fs.c
+    # src/fs.c
+    ../common/common_src/fs.c
+
 )
 
 pico_add_extra_outputs(alarm_clock_control)
@@ -40,7 +44,7 @@ pico_add_extra_outputs(alarm_clock_control)
 target_include_directories(alarm_clock_control PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
   include/
-  ../common/
+  ../common/common_inc/
   )
 
 
