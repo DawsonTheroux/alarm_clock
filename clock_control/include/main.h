@@ -9,7 +9,10 @@
 
 // #define SPI_FREQ_HZ (1 * 1000 * 1000)
 // #define SPI_FREQ_HZ (1 * 1000 * 1000)
+
 #define SPI_FREQ_HZ (60 * 1000 * 1000)
+/* Flash works at 100MHz, but I need to test with display as well. */
+// #define SPI_FREQ_HZ (100 * 1000 * 1000)
 
 #endif
 

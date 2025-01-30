@@ -40,7 +40,7 @@ void setup_gpio()
   // Initialize the GPIO for all other components.
   init_display_gpio();
   init_flash_gpio();
-  init_flash();
+  // init_flash();
 
   // Allocate the display buffer
   display_buffer = malloc(display_buffer_size);

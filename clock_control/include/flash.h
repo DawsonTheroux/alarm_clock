@@ -10,7 +10,7 @@
 #define SD_START_TOKEN   (uint8_t) 0xFE
 #define SD_DATA_ACCEPTED (uint8_t) 0x1F
 
-/* FLASH STATUS BITS */
+/* FLASH STATUS REGISTER BITS */
 #define FLASH_RDSR_WIP_BIT  0x01
 #define FLASH_RDSR_WEL_BIT  0x02
 #define FLASH_RDSR_BP0_BIT  0x04
@@ -18,141 +18,51 @@
 #define FLASH_RDSR_BP2_BIT  0x10
 #define FLASH_RDSR_BP3_BIT  0x20
 #define FLASH_RDSR_QE_BIT   0x40
-#define FLASH_RDSR_SRWD_BIT 0x40
+#define FLASH_RDSR_SRWD_BIT 0x80
+
+
+/* FLASH CONFIG REGISTER BITS */
+#define FLASH_RDCR_ODS0_BIT  0x01
+#define FLASH_RDCR_ODS1_BIT  0x02
+/* bit 2 is reserved */
+#define FLASH_RDCR_TB_BIT    0x08
+#define FLASH_RDCR_PBE_BIT   0x10
+#define FLASH_RDCR_4BYTE_BIT 0x20
+/* bit 6 is reserved */
+/* bit 7 is reserved */
+
+/* FLASH SECURITY REGISTER CONFIG */
+#define FLASH_RDSCUR_P_FAIL 0x20 // Program failed flag
+#define FLASH_RDSCUR_E_FAIL 0x40 // Erase failed flag
 
 /* FLASH COMMANDS */
-#define FLASH_PP   0x02
-#define FLASH_RDSR 0x05
-#define FLASH_WREN 0x06
-#define FLASH_CE   0x60
-
-
-
-typedef struct sd_command_t {
-  uint8_t cmd;    // The command number.
-  uint32_t arg;   // The argument for the command. 
-  uint8_t crc;    // The CRC for the command.
-  int(*response_func)(uint8_t*);  // The funciton pointer for the command.
-}sd_command_t;
+#define FLASH_PP     0x02 // Page Program
+#define FLASH_READ   0x03 // Read
+#define FLASH_RDSR   0x05 // Read Status Register
+#define FLASH_WREN   0x06 // Write Enable
+#define FLASH_RDCR   0x15 // Read config Register
+#define FLASH_SE     0x20 // Sector Erase
+#define FLASH_CE     0x60 // Chip Erase
+#define FLASH_RDSCUR 0x2B // Read security register
+#define FLASH_EN4B   0xB7 // Enable 4-byte address
 
 /** init_flash_gpio
  * Initializes the flash GPIOs
  */
 void init_flash_gpio();
 
-/** init_flash
- * Initializes the SD card to SPI mode.
- */
-void init_flash();
-
 /** init_sd_spi_mode
  * Sets SD card into SPI mode SPI
  */
 int init_sd_spi_mode();
 
-/** flash_read_block
- * Reads a block from the flash.
- *
- * addr:   The flash page to read from.
- * buffer: The buffer to read the data to (Must be 514 bytes)
- * token:  Response value.
- * 
- */
-int flash_read_block(uint32_t addr, uint8_t *buffer, uint8_t *token);
 
-/** flash_write_block
- * Writes a block to flash.
- *
- * addr:   The address to write to
- * buffer: The buffer to read the data to (Must be 514 bytes)
- * token:  Response value.
- */
-int flash_write_block(uint32_t addr, uint8_t *buffer, uint8_t *token);
+int spi_flash_read_page(uint32_t address, uint8_t *res_buf, uint32_t buf_len);
 
-/** transmit_sd_command 
- * Handles the transmission of the SD command via the SPI bus.
- *
- * Do not call this directly, instead call send_recv_sd_command.
- */
-void transmit_sd_command(uint8_t cmd, uint32_t arg, uint8_t crc);
+int spi_flash_page_program(uint32_t address, uint8_t *buf, uint32_t buf_len);
 
-/** send_recv_sd_command
- * Performs CS, uses transmit_sd_command and waits for the appropriate
- * response of the SD command.
- */
-int send_recv_sd_command(sd_command_t sd_cmd, uint8_t* res);
+int spi_flash_sector_erase(uint32_t address);
 
-/** sd_read_res1
- * Wait for res1
- *
- * Returns the response of the command.
- *  Value of 0 means nothing was received.
- */
-int sd_read_res1(uint8_t* res);
-
-/** sd_read_res7
- * Read a SPI response type 7. (This response if 5 bytes long?)
- */
-int sd_read_res3_7(uint8_t* res);
-
-// Command 0 - Set idle state
-static sd_command_t sd_cmd_0 = {
-  .cmd = 0,
-  .arg = 0x00000000,
-  .crc = 0x94,
-  .response_func = sd_read_res1,
-};
-
-// Command 8 - Send interface condition.
-static sd_command_t sd_cmd_8 = {
-  .cmd = 8,
-  .arg = 0x0000001AA,
-  .crc = 0x86,
-  .response_func = sd_read_res3_7,
-};
-
-// Command 17 - SD read block.
-// When using this command, you need 
-// to manage the data read after res1.
-static sd_command_t sd_cmd_17 = {
-  .cmd = 17,
-  .arg = 0, // Arg is the address of the block
-  .crc = 0x00,
-  .response_func = sd_read_res1,
-};
-
-// Command 24 - SD write block.
-// When using this command, the data read
-// from the command must be managed. 
-// response_func is only used to report the error code.
-static sd_command_t sd_cmd_24 = {
-  .cmd = 24,
-  .arg = 0,  //Arg is the address to write to.
-  .crc = 0x00,
-  .response_func = sd_read_res1,
-};
-
-// Command 41 - ACMD application command
-static sd_command_t sd_cmd_41 = {
-  .cmd = 41,
-  .arg = 0x40000000,
-  .crc = 0x00,
-  .response_func = sd_read_res1,
-};
-
-// Command 55 - Next command is APP_CMD
-static sd_command_t sd_cmd_55 = {
-  .cmd = 55,
-  .arg = 0x00000000,
-  .crc = 0x00,
-  .response_func = sd_read_res1,
-};
-
-static sd_command_t sd_cmd_58 = {
-  .cmd = 58,
-  .arg = 0x00000000,
-  .crc = 0x00,
-  .response_func = sd_read_res3_7,
-};
+int spi_flash_chip_erase();
 
 #endif

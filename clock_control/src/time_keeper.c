@@ -77,7 +77,7 @@ void time_keeper_task(void* args)
 
   while(init_sd_spi_mode()){
     vTaskDelay(100 / portTICK_PERIOD_MS);
-    init_flash();
+    // init_flash();
     printf("SD card SPI mode init FAILED...");
     printf("Trying again.\r\n");
     vTaskDelay(10 / portTICK_PERIOD_MS);

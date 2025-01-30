@@ -31,19 +31,7 @@
 */
 static uint8_t read_flash(uint32_t address, uint32_t length, uint8_t *read_buffer)
 {
-  uint8_t read_token;
-  uint32_t sd_block_address = address / SD_BLOCK_LEN;
-  uint32_t number_of_blocks = (length > SD_BLOCK_LEN) ? (length / SD_BLOCK_LEN) : 0;
-
-  // Use a temporary buffer to read an SD block, then copy the memory to the read_buffer.
-  uint8_t tmp_buffer[SD_BLOCK_LEN];
-  for(int i=0; i<number_of_blocks + 1; i++){
-    if(flash_read_block(sd_block_address + i, tmp_buffer, &read_token)){
-      return -1;
-    }
-    memcpy(read_buffer + (i * SD_BLOCK_LEN), tmp_buffer, ((SD_BLOCK_LEN * (i + 1)) < length) ? SD_BLOCK_LEN : length);
-    length -= SD_BLOCK_LEN;
-  }
+	spi_flash_read_page(address, read_buffer, length);
   return 0;
 }
 
@@ -53,7 +41,8 @@ static uint8_t read_flash(uint32_t address, uint32_t length, uint8_t *read_buffe
 static uint8_t write_flash(uint32_t address, uint8_t *write_buffer)
 {
   uint8_t write_token;
-  return flash_read_block(address, write_buffer, &write_token);
+	printf("write_flash not implemented for PICO SPI flash\n");
+	return -1;
 }
 
 
