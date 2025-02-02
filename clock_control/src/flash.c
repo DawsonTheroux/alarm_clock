@@ -98,7 +98,7 @@ int init_sd_spi_mode()
 {
 	/* set the spi flash into 4-Byte addressing mode */
 	if(spi_flash_en4b()) {
-					printf("Failed to init flash in 4-byte address mode\n");
+					printf("FLASH ERROR: Failed to init flash in 4-byte address mode\n");
 					return -1;
 	}
 
@@ -185,7 +185,7 @@ int spi_flash_page_program(uint32_t address, uint8_t *buf, uint32_t buf_len)
 	while(remaining_bytes > 0) {
 			/* The number of bytes to write is either 256, or the number of remaining bytes */
 			if(spi_flash_wait_wren()) {
-					printf("ERROR: Failed to enable Write EN Bit\n");
+					printf("FLASH ERROR: Failed to enable Write EN Bit\n");
 					return -1;
 			}
 			spi_flash_read_reg(FLASH_RDSR, &reg_value);
@@ -207,14 +207,14 @@ int spi_flash_page_program(uint32_t address, uint8_t *buf, uint32_t buf_len)
 
 			/* Wait for WIP flag to clean */
 			if(spi_flash_wait_wip()) {
-					printf("ERROR: Failed to wait for WIP in page program\n");
+					printf("FLASH ERROR: Failed to wait for WIP in page program\n");
 					return -2;
 			}
 			 
 			/* read the security register */
 			spi_flash_read_reg(FLASH_RDSCUR, &reg_value);
 			if(reg_value & FLASH_RDSCUR_P_FAIL) {
-							printf("ERROR: SPI flash RDSCR reported P_FAIL\n");
+							printf("FLASH ERROR: SPI flash RDSCR reported P_FAIL\n");
 							return -3;
 			}
 			
@@ -235,7 +235,7 @@ int spi_flash_sector_erase(uint32_t address)
 
 	/* Write enable */
 	if(spi_flash_wait_wren()) {
-			printf("Failed to enable Write in RDSR\n");
+			printf("FLASH ERROR: Failed to enable Write in RDSR\n");
 			return -1;
 	}
 
@@ -257,7 +257,7 @@ int spi_flash_chip_erase()
 
 	/* Write enable */
 	if(spi_flash_wait_wren()) {
-			printf("Failed to enable Write in RDSR\n");
+			printf("FLASH ERROR: Failed to enable Write in RDSR\n");
 			return -1;
 	}
 

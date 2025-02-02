@@ -20,6 +20,7 @@
 #include "display.h"
 #include "time_keeper.h"
 #include "flash.h"
+#include "uart_flasher.h"
 
 void setup_gpio()
 {
@@ -54,18 +55,23 @@ void setup_gpio()
 
 int main() 
 {
-  /* I don't want to dynamically allocate all the queues,     */
-  /* so instead I am putting them all in the idle task stack. */
   stdio_init_all();
   
   setup_gpio();
-  printf("After setup_gpio\r\n");
-  // setup_tasks();
+
+  /* I don't want to dynamically allocate all the queues,     */
+  /* so instead I am putting them all in the idle task stack. */
+  TaskHandle_t cc_i2c_tx_handle;
+  TaskHandle_t cc_spi_rx_handle;
+  TaskHandle_t time_keeper_handle;
+  TaskHandle_t uart_flasher_handle;
+
   cc_i2c_args_t cc_i2c_args;
   cc_spi_args_t cc_spi_args;
   time_keeper_args_t time_keeper_args;
+	uart_flasher_args_t uart_flasher_args;
 
-  /* Setup all the queues */
+  /* Setup all the task arguments */
   QueueHandle_t cc_i2c_tx_queue = xQueueCreate(16, sizeof(cc_i2c_transaction_t)); 
   QueueHandle_t time_keeper_queue = xQueueCreate(16, sizeof(cc_spi_transaction_t));
   cc_i2c_args.tx_queue = &cc_i2c_tx_queue;
@@ -73,9 +79,17 @@ int main()
   time_keeper_args.i2c_tx_queue = &cc_i2c_tx_queue;
   time_keeper_args.spi_rx_queue = &time_keeper_queue;
 
+	/* I think uxTaskGetSystemState is supposed to be used for this. I will use this dumb */
+	/* method for now. */
+	uint32_t number_of_tasks = 3;
+	TaskHandle_t task_handles[3] = {cc_i2c_tx_handle, 
+																	cc_spi_rx_handle, 
+																	time_keeper_handle};
+	uart_flasher_args.task_handles = task_handles;
+	uart_flasher_args.num_tasks = number_of_tasks;
+
   /* Setup I2C task */
-  TaskHandle_t cc_i2c_tx_handle;
-        xTaskCreate(cc_i2c_tx_task,
+  xTaskCreate(cc_i2c_tx_task,
              "chipcomms i2c tx task",
              configMINIMAL_STACK_SIZE, 
              (void*)&cc_i2c_args, 
@@ -83,8 +97,7 @@ int main()
              &cc_i2c_tx_handle);
 
   /* Setup SPI task */
-  TaskHandle_t cc_spi_rx_handle;
-        int returned = xTaskCreate(cc_spi_rx_task, 
+  xTaskCreate(cc_spi_rx_task, 
              "chipcomms spi rx task", 
              configMINIMAL_STACK_SIZE, 
              (void*)&cc_spi_args, 
@@ -92,13 +105,19 @@ int main()
              &cc_spi_rx_handle);
 
   /* Setup time keeper task */
-  TaskHandle_t time_keeper_handle;
-  int returned2 = xTaskCreate(time_keeper_task,
+  xTaskCreate(time_keeper_task,
               "time keeper task",
               5000 * 4,
               (void*)&time_keeper_args,
               TIME_KEEPER_PRIORITY,
               &time_keeper_handle);
+
+	xTaskCreate(uart_flasher_task,
+							"UART Based flash programming task",
+							2048,
+							(void*)&uart_flasher_args,
+							UART_FLASHER_PRIORITY,
+							&uart_flasher_handle);
 
   // Start the scheduler.
   vTaskStartScheduler();

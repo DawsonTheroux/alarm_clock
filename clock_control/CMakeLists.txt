@@ -32,6 +32,7 @@ add_executable(alarm_clock_control
     src/display.c
     src/display_manager.c
     src/flash.c
+		src/uart_flasher.c
     # src/fs.c
     ../common/common_src/fs.c
 

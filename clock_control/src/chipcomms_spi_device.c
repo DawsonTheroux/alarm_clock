@@ -64,7 +64,7 @@ void setup_spi()
   irq_set_priority(DMA_IRQ_0, 0);
   irq_set_enabled(DMA_IRQ_0, true);
 
-  printf("Set Baud rate: %d - RX pin: %d - TX pin: %d - SCK pin: %d - CS pin: %d\r\n", spi_get_baudrate(spi_default), SPI0_RX_PIN, SPI0_TX_PIN, SPI0_SCK_PIN, SPI0_CSN_PIN);
+  // printf("Set Baud rate: %d - RX pin: %d - TX pin: %d - SCK pin: %d - CS pin: %d\r\n", spi_get_baudrate(spi_default), SPI0_RX_PIN, SPI0_TX_PIN, SPI0_SCK_PIN, SPI0_CSN_PIN);
 }
 
 void spi_dma_irq_handler(void)
@@ -115,7 +115,7 @@ void spi_rx_irq_handler(void)
 
 void cc_spi_rx_task(void* args)
 {
-  printf("Hello SPI task\r\n");
+  // printf("Hello SPI task\r\n");
   cc_spi_args_t* cc_spi_args = (cc_spi_args_t*)args;
   setup_spi();
   for(;;){
@@ -124,7 +124,7 @@ void cc_spi_rx_task(void* args)
       // control the flow based on the command byte.
       switch(cc_spi_transaction->data[0]){
         case SPI_CMD_TIMESYNC:
-          printf("Sending to SPI\r\n");
+          // printf("Sending to SPI\r\n");
           // It is up to the time keeper to free the spi data now.
           xQueueSend(*(cc_spi_args->time_keeper_queue), &cc_spi_transaction, 100);
           break;

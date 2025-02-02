@@ -27,7 +27,6 @@ void cc_i2c_tx_task(void* args)
 {
   /* !!I2C uses 1 byte for transmission length!! */
 
-  printf("Hello I2C task\r\n");
   cc_i2c_args_t* cc_i2c_args = (cc_i2c_args_t*)args;
   cc_i2c_transaction_t* cc_i2c_transaction;
   setup_i2c0_bus();

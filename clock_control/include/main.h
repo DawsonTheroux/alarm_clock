@@ -6,6 +6,8 @@
 #define CC_SPI_PRIORITY 5
 #define CC_I2C_PRIORITY 5
 #define TIME_KEEPER_PRIORITY 9
+/* High priority, but does literally nothing 99.99% of the time. */
+#define UART_FLASHER_PRIORITY 9
 
 // #define SPI_FREQ_HZ (1 * 1000 * 1000)
 // #define SPI_FREQ_HZ (1 * 1000 * 1000)

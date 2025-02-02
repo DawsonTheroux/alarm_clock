@@ -77,10 +77,6 @@ void time_keeper_task(void* args)
 
   while(init_sd_spi_mode()){
     vTaskDelay(100 / portTICK_PERIOD_MS);
-    // init_flash();
-    printf("SD card SPI mode init FAILED...");
-    printf("Trying again.\r\n");
-    vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 
   // Speed up SPI1 to full speed.
@@ -96,10 +92,10 @@ void time_keeper_task(void* args)
           update_time_from_spi(cc_spi_transaction->data + 1);
           free(cc_spi_transaction->data);
           free(cc_spi_transaction);
-          printf("!!TIME UPDATED!!\r\n");
+          // printf("!!TIME UPDATED!!\r\n");
           break;
         default:
-          printf("time_keeper received unknown command %d\r\n", cc_spi_transaction->data[0]);
+          printf("ERROR: time_keeper received unknown command %d\r\n", cc_spi_transaction->data[0]);
           free(cc_spi_transaction->data);
           free(cc_spi_transaction);
           break;
