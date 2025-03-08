@@ -1,6 +1,9 @@
 import os
 import struct
 import math
+import serial
+import time 
+
 from lib.font import name_char_map
 DIR_ENTRY_SIZE = 16 # address (2 bytes) + file name (10 bytes) + file length (4 bytes)
 # MAX_FS_SIZE = 125 * 1000 * 1000 # 1GBit
@@ -85,6 +88,151 @@ def output_fs_to_file(root_dir, output_file, page_size):
     # Write the binary data to the output file.
     with open(output_file, "wb") as fs_file:
         fs_file.write(fs_bin)
+
+#
+# send_uart_payload
+#
+def send_uart_payload(uart, payload, offset, page_size):
+		# Extract the bytes for the offset
+		bytes_written = 0
+		# current_offset = offset
+		current_length = 0
+		offset_in_payload = 0
+		length_remaining = len(payload) 
+
+		while length_remaining > 0:
+				# Set the current length to the either the page size of the length remaining to send.
+				current_length = length_remaining if (length_remaining <= page_size) else page_size
+
+				# Create the header.
+				index = 0
+				header = [0, 0, 0, 0, 0]
+				# # The offset.
+				# header[0] = (current_offset & 0xFF00) >> 8 # MSB of the offset
+				# header[1] = (current_offset & 0xFF)        # LSB of the offset
+				# # The size.
+				# header[2] = (current_length & 0x0000ff) >> 16
+				# header[3] = (current_length & 0x00ff00) >> 8
+				# header[4] = (current_length & 0x0000ff)
+
+				header[0] = ((offset + offset_in_payload) & 0xFF00) >> 8 # MSB of the offset
+				header[1] = ((offset + offset_in_payload) & 0xFF)        # LSB of the offset
+				# The size.
+				header[2] = (current_length & 0x0000FF) >> 16
+				header[3] = (current_length & 0x00FF00) >> 8
+				header[4] = (current_length & 0x0000FF)
+				header = bytearray(header)
+
+				# Send the header
+				print(f"\nSending package for header - {offset_in_payload=} - {current_length=} - {header=}")
+				if uart.write(header) != 5:
+						print("uart.write didn't send 5 bytes")
+
+				# Wait for ACK of the header
+				if (value:= uart.read(len("PROG_ACK") + 8))[0:len("PROG_ACK")] != "PROG_ACK".encode('ascii'):
+						print("FAILED TO RECEIVE ACK ON PACKET")
+						time.sleep(10)
+						print(f"{offset_in_payload=} {current_length=} - RECEIVED: {value}{uart.read(uart.in_waiting)}")
+						exit()
+				print(f"Received ACK for header - {offset_in_payload=} - {current_length=} - {header=} - {value=}")
+				print(f"\nSending payload of size {len(payload[offset_in_payload * page_size :((offset_in_payload *page_size)+ current_length)])}")
+				# Send the payload
+				if uart.write(payload[offset_in_payload * page_size :((offset_in_payload * page_size) + current_length)]) != len(payload[offset_in_payload * page_size :((offset_in_payload *page_size)+ current_length)]):
+						print("uart.write didn't send full payload")
+
+				#	Wait for ACK from device. (Maybe this could also double check the header from the device)
+				uart.reset_input_buffer()
+				# if (value:= uart.read_until("PROG_ACK".encode('ascii'), 50)) != "PROG_ACK".encode('ascii'):
+				if (value:= uart.read(len("PROG_DONE") + 8))[0:len("PROG_DONE")] != "PROG_DONE".encode('ascii'):
+						print("FAILED TO RECEIVE DONE ON PACKET")
+						time.sleep(10)
+						print(f"{offset_in_payload=} {current_length=} - RECEIVED: {value}{uart.read(uart.in_waiting)}")
+						exit()
+				print(f"Received DONE for package with header - {offset_in_payload=} - {current_length=} - {header=} - {value=}")
+
+				# Remove the length written from the length remaining
+				offset_in_payload += (int)(current_length / page_size)
+				length_remaining -= current_length
+		
+#
+# output_fs_dir_to_com
+#
+def output_fs_dir_to_com(uart, directory_entry, page_size):
+		payload = bytearray()
+		payload += create_entry_bytes(directory_entry, True, page_size)
+		for entry in directory_entry["entries"]:
+				payload += create_entry_bytes(entry, False, page_size)
+
+		send_uart_payload(uart, payload, directory_entry["offset"], page_size)
+
+#
+# output_fs_to_com
+#
+def output_fs_file_to_com(uart, file_entry, page_size):
+		payload = None
+		with open(file_entry["name"], "rb") as file:
+				payload =  bytearray(file.read())
+
+		if payload == None:
+				print(f"Failed to read file: {file_entry['name']}")
+
+		send_uart_payload(uart, payload, file_entry["offset"], page_size)
+
+#
+# output_fs_to_com
+#
+def output_fs_to_com(root_dir, com_port, page_size):
+        uart = serial.Serial(com_port, 115200, timeout=10)
+        print(uart.name)
+
+        # Send PROG_START, receive PROG_ACK.
+        uart.write("PROG_START".encode('ascii'))
+        #uart.reset_input_buffer()
+        if (error := uart.read_until("PROG_ACK".encode('ascii'), 20)) != "PROG_ACK".encode('ascii'):
+            print(f"ERROR: FAILED TO RECEIVE ACK {error=}")
+            time.sleep(10)
+            print(f"{uart.read(uart.in_waiting)}")
+            exit()
+        print("Received PROG_ACK")
+
+
+        # Receive PROG_READY.
+        #uart.reset_input_buffer()
+        uart.timeout = 300
+        if (error := uart.read_until("PROG_READY".encode('ascii'), 20)) != "PROG_READY".encode('ascii'):
+            print(f"FAILED TO RECEIVE PROG_READY {error=}")
+            time.sleep(10)
+            print(f"{uart.read(uart.in_waiting)}")
+            exit()
+        print("Received PROG_READY")
+
+        # The data
+        # Header = 5 bytes
+        #		(2) target index in pages
+        #   (3) Package size with max of 1 page
+        # Payload = FS PAGE SIZE (Can be smaller)
+
+        # Parse the tree.
+        to_visit = []
+        current_dir = root_dir
+        while current_dir != None:
+            print(f"\n---Writting directory: {current_dir['name']} to device.---")
+            output_fs_dir_to_com(uart, current_dir, page_size)
+            #add_fs_directory(fs_bin, current_dir, page_size)
+            for file_entry in current_dir["entries"]:
+                if file_entry["is_dir"]:
+                    to_visit.append(file_entry)
+                else:
+                    print(f"\n---Writting file: {file_entry['name']} to device.---")
+                    output_fs_file_to_com(uart, file_entry, page_size)
+                    # add_fs_file(fs_bin, file_entry, page_size)
+            if len(to_visit) != 0:
+                current_dir = to_visit[0]
+                to_visit = to_visit[1:]
+            else:
+                break
+
+        uart.write("PROG_DONE".encode('ascii'))
 
 #
 # generate_file_table

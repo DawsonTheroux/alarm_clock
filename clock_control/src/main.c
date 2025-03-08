@@ -108,22 +108,25 @@ int main()
   xTaskCreate(time_keeper_task,
               "time keeper task",
               5000 * 4,
+              // 4096,
               (void*)&time_keeper_args,
               TIME_KEEPER_PRIORITY,
               &time_keeper_handle);
+	
 
-	xTaskCreate(uart_flasher_task,
-							"UART Based flash programming task",
-							2048,
-							(void*)&uart_flasher_args,
-							UART_FLASHER_PRIORITY,
-							&uart_flasher_handle);
+    xTaskCreate(uart_flasher_task,
+ 	 					"UART Based flash programming task",
+ 	 					4096,
+ 	 					(void*)&uart_flasher_args,
+ 	 					UART_FLASHER_PRIORITY,
+ 	 					&uart_flasher_handle);
 
   // Start the scheduler.
   vTaskStartScheduler();
 
   for( ;; )
   {
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+		// FeedWatchdog();
+    vTaskDelay(50 / portTICK_PERIOD_MS);
   }
 }

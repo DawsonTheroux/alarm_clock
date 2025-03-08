@@ -148,8 +148,6 @@ static uint8_t find_file_in_directory(uint8_t *directory_buffer, char *filename,
     if(strncmp(name, directory_buffer+i+6, DIR_NAME_LEN) == 0){
       if(strncmp(extension, directory_buffer+i+6 + DIR_NAME_LEN, DIR_EXTENSION_LEN) == 0){
         *entry_address = ((uint32_t)(*((uint16_t*)(directory_buffer+i)))) * FS_PAGE_SIZE;
-        // For some reason, casting to uint32_t and dereferencing doesn't work.
-        // *entry_length = *((uint32_t*)(directory_buffer+i+2));
         for(int j=0; j<4; j++){
           (*entry_length) |= (((uint32_t)(directory_buffer[i+2+j])) << (j * 8));
         }
@@ -164,7 +162,7 @@ static uint8_t find_file_in_directory(uint8_t *directory_buffer, char *filename,
 /*
 * Read a file from the file system
 */
-uint8_t read_file(char *filepath, uint8_t *read_buffer, uint32_t max_size, uint32_t *bytes_read)
+int read_file(char *filepath, uint8_t *read_buffer, uint32_t max_size, uint32_t *bytes_read)
 {
   uint8_t directory_buffer[FS_PAGE_SIZE];
   uint32_t directory_size = 0;
@@ -185,7 +183,10 @@ uint8_t read_file(char *filepath, uint8_t *read_buffer, uint32_t max_size, uint3
     filepath++; // remove leading '/'
     // Get the root component and gets its information.
     root_component_length(filepath, &name_length);
-    find_file_in_directory(directory_buffer, filepath, name_length, &entry_address, &entry_length, entry_name, entry_extension);
+    if(find_file_in_directory(directory_buffer, filepath, name_length, &entry_address, &entry_length, entry_name, entry_extension)) {
+        printf("NEW FAIL DAWSON\n");
+        return -1;
+    }
     filepath += name_length; // remove the root component from the path.
     // If the entry is a directory, then get the next entry for directory buffer.
     if(entry_extension[0] == 0xFF && entry_extension[1] == 0xFF && entry_extension[2] == 0xFF){
@@ -199,6 +200,7 @@ uint8_t read_file(char *filepath, uint8_t *read_buffer, uint32_t max_size, uint3
         printf("fs.c:read_file() - Failed to read file...Entry length(%u) is larger than max_size(%u)\r\n", entry_length, max_size);
         return -1;
       }
+      printf("hello 3\n");
       if(read_flash(entry_address, entry_length, read_buffer)){
         printf("fs.c:read_file() - Failed to read flash address: %u, length: %u for file with name: %s.%s\r\n", entry_address, entry_length, entry_name, entry_extension);
         return -1;
@@ -212,7 +214,7 @@ uint8_t read_file(char *filepath, uint8_t *read_buffer, uint32_t max_size, uint3
 /*
 * write a file to the file system.
 */
-uint8_t write_file(char* filepath, uint8_t* file_buffer, uint32_t file_size)
+int write_file(char* filepath, uint8_t* file_buffer, uint32_t file_size)
 {
   printf("write_file not implemented yet\r\n");
   return false;
@@ -221,7 +223,7 @@ uint8_t write_file(char* filepath, uint8_t* file_buffer, uint32_t file_size)
 /*
 * Get the size of a file
 */
-uint8_t file_size(char* filepath, uint32_t* file_size)
+int file_size(char* filepath, uint32_t* file_size)
 {
   printf("file_size not implemented yet\r\n");
   return false;

@@ -82,9 +82,9 @@ void display_basic_draw()
 void init_display_gpio()
 {
   /* Init display power pin */
-  gpio_init(DISPLAY_PWR);
-  gpio_set_dir(DISPLAY_PWR, GPIO_OUT);
-  gpio_put(DISPLAY_PWR, 0);
+  // gpio_init(DISPLAY_PWR);
+  // gpio_set_dir(DISPLAY_PWR, GPIO_OUT);
+  // gpio_put(DISPLAY_PWR, 0);
   /* Init display reset pin */
   gpio_init(DISPLAY_RST);
   gpio_set_dir(DISPLAY_RST, GPIO_OUT);
@@ -97,13 +97,6 @@ void init_display_gpio()
   gpio_init(DISPLAY_CS);
   gpio_set_dir(DISPLAY_CS, GPIO_OUT);
   gpio_put(DISPLAY_CS , 1);
-  /* Init display clock pin */
-  // TODO: Move this out of the display init gpio command.
-  // spi_init(spi1, DISPLAY_SPI_FREQ_HZ);
-  // gpio_set_function(SPI_CLK, GPIO_FUNC_SPI);
-  // gpio_set_function(SPI_DOUT, GPIO_FUNC_SPI);
-  // gpio_set_function(SPI_DIN, GPIO_FUNC_SPI);
-  // spi_set_format(spi1, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
   /* Init display busy detect pin */
   gpio_init(DISPLAY_BUSY);
   gpio_set_dir(DISPLAY_BUSY, GPIO_IN);

@@ -62,69 +62,70 @@ loop:
 
 void time_keeper_task(void* args)
 {
-  time_keeper_args_t* time_keeper_args = (time_keeper_args_t*)args;
-  setup_rtc();
-  printf("Hello time keeper task\r\n");
-  // Cast the args to 
-  uint8_t previous_minute = -1;
-  uint8_t previous_day = -1;
-  datetime_t current_time;
-  char datetime_buf[256];
-  char* datetime_str = &datetime_buf[0];
-  cc_spi_transaction_t* cc_spi_transaction;
-  bool refresh_display = true;
-  bool full_update = true;
+    time_keeper_args_t* time_keeper_args = (time_keeper_args_t*)args;
+    setup_rtc();
+    printf("Hello time keeper task\r\n");
+    // Cast the args to 
+    uint8_t previous_minute = -1;
+    uint8_t previous_day = -1;
+    datetime_t current_time;
+    char datetime_buf[256];
+    char* datetime_str = &datetime_buf[0];
+    cc_spi_transaction_t* cc_spi_transaction;
+    bool refresh_display = true;
+    bool full_update = true;
 
-  while(init_sd_spi_mode()){
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-  }
-
-  // Speed up SPI1 to full speed.
-  spi_set_baudrate(spi1, SPI_FREQ_HZ);
-
-  // temp_func();
-  for(;;){
-    if(xQueueReceive(*(time_keeper_args->spi_rx_queue), &cc_spi_transaction, 100) == pdTRUE){
-      switch(cc_spi_transaction->data[0]){
-        case SPI_CMD_TIMESYNC:
-          refresh_display = true;
-          full_update = true;
-          update_time_from_spi(cc_spi_transaction->data + 1);
-          free(cc_spi_transaction->data);
-          free(cc_spi_transaction);
-          // printf("!!TIME UPDATED!!\r\n");
-          break;
-        default:
-          printf("ERROR: time_keeper received unknown command %d\r\n", cc_spi_transaction->data[0]);
-          free(cc_spi_transaction->data);
-          free(cc_spi_transaction);
-          break;
-      }
+    while(init_sd_spi_mode()){
+        printf("failed to init sd spi mode\n");
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
-    /* Print the current time. This will probably be able to be changed later to update */
-    /* the display                                                                      */
-    rtc_get_datetime(&current_time);
-    if(previous_minute != current_time.min || refresh_display){
-      if(current_time.min % 5 == 0 || current_time.min % 10 == 0){
-        full_update = true;
-      }
-      if(refresh_display || previous_day != current_time.day){
-        full_update = true;
-        update_display_date(current_time);
-      }
-      update_display_time(current_time, !full_update);
-      if(full_update){
-        display_init_full();
-        draw_full_display();
-        display_sleep();
-        full_update = false;
-      }
-      refresh_display = false;
-      previous_minute = current_time.min;
-      previous_day = current_time.day;
+
+    // Speed up SPI1 to full speed.
+    spi_set_baudrate(spi1, SPI_FREQ_HZ);
+
+    // temp_func();
+    for(;;){
+        if(xQueueReceive(*(time_keeper_args->spi_rx_queue), &cc_spi_transaction, 100) == pdTRUE){
+            switch(cc_spi_transaction->data[0]){
+                case SPI_CMD_TIMESYNC:
+                    refresh_display = true;
+                    full_update = true;
+                    update_time_from_spi(cc_spi_transaction->data + 1);
+                    free(cc_spi_transaction->data);
+                    free(cc_spi_transaction);
+                    // printf("!!TIME UPDATED!!\r\n");
+                    break;
+                default:
+                    printf("ERROR: time_keeper received unknown command %d\r\n", cc_spi_transaction->data[0]);
+                    free(cc_spi_transaction->data);
+                    free(cc_spi_transaction);
+                    break;
+            }
+        }
+        /* Print the current time. This will probably be able to be changed later to update */
+        /* the display                                                                      */
+        rtc_get_datetime(&current_time);
+        if(previous_minute != current_time.min || refresh_display){
+            if(current_time.min % 5 == 0 || current_time.min % 10 == 0){
+                full_update = true;
+            }
+            if(refresh_display || previous_day != current_time.day){
+                full_update = true;
+                update_display_date(current_time);
+            }
+            update_display_time(current_time, !full_update);
+            if(full_update){
+                display_init_full();
+                draw_full_display();
+                display_sleep();
+                full_update = false;
+            }
+            refresh_display = false;
+            previous_minute = current_time.min;
+            previous_day = current_time.day;
+        }
+        vTaskDelay(50 / portTICK_PERIOD_MS);
     }
-    vTaskDelay(50 / portTICK_PERIOD_MS);
-  }
 }
 
 void setup_rtc()

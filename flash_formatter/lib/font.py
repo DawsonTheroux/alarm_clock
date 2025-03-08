@@ -60,7 +60,7 @@ def generate_font(font_file, char_list, font_size, output_directory, time_digit)
         
         small_width = int(width / 4) if width % 4 == 0 else int(width / 4) + 1
         # The first two values in DAT at the height and the width (NOTE WIDTH IS IN BYTES NOT BITS)
-        print(f"{height=} top={face.glyph.bitmap_top} left={face.glyph.bitmap_left}")
+        # print(f"{height=} top={face.glyph.bitmap_top} left={face.glyph.bitmap_left}")
         output_data = [height,(small_width*4), face.glyph.bitmap_top, face.glyph.bitmap_left if face.glyph.bitmap_left > 0 else 0]
         for h in range(height):
             for w in range(small_width):

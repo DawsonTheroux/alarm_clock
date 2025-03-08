@@ -110,7 +110,7 @@ void app_main(void)
 
   TaskHandle_t buzzer_task;
   // xTaskCreatePinnedToCore(wifi_init_sta, "wifi setup + rtc", 5096, &wifi_args, 9, &(wifi_task_handle), 1);
-  xTaskCreate(control_buzzer, "buzzer", 1024, NULL, 5, &buzzer_task);
+  // xTaskCreate(control_buzzer, "buzzer", 1024, NULL, 5, &buzzer_task);
   
   for(;;){
     vTaskDelay(pdMS_TO_TICKS(200));

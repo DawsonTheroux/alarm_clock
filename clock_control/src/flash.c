@@ -15,20 +15,21 @@
 
 // TODO:
 // Read the status register from the device
+// #define WAIT_MS 10000
 
 uint8_t dummy_value = 0xFF;
 
 static void spi_flash_write(uint8_t *write_buf, uint8_t msg_len)
 {
 	gpio_put(FLASH_CS, 0);
-  spi_write_blocking(spi1, write_buf, msg_len);
+    spi_write_blocking(spi1, write_buf, msg_len);
 	gpio_put(FLASH_CS, 1);
 }
 
 static void spi_flash_read_reg(uint8_t reg, uint8_t *response)
 {
 	gpio_put(FLASH_CS, 0);
-  spi_write_blocking(spi1, &reg, 1);
+    spi_write_blocking(spi1, &reg, 1);
 	spi_read_blocking(spi1, dummy_value, response, 1);
 	gpio_put(FLASH_CS, 1);
 }
@@ -37,14 +38,15 @@ static void spi_flash_read_reg(uint8_t reg, uint8_t *response)
 static int spi_flash_wait_wip()
 {
 		uint8_t reg_value;
-
-		for(;;) {
-				spi_flash_read_reg(FLASH_RDSR, &reg_value);
-				if(!(reg_value & FLASH_RDSR_WIP_BIT)) {
-					return 0;
-				}
+		// for(uint32_t i=0;i<WAIT_MS;i++) {
+        for(;;) {
+		    spi_flash_read_reg(FLASH_RDSR, &reg_value);
+			if(!(reg_value & FLASH_RDSR_WIP_BIT)) {
+				return 0;
+			}
     		vTaskDelay(1 / portTICK_PERIOD_MS);
 		}
+        printf("spi_flash_wait_wip timeout\n");
 		return -1;
 }
 
@@ -53,16 +55,20 @@ static int spi_flash_wait_wren()
 	uint8_t command = FLASH_WREN;
 	uint8_t reg_value;
 
-	for(;;) {
-			/* Write the WREN command */
-			spi_flash_write(&command, 1);
-			/* Check RDSR for write enable */
-			spi_flash_read_reg(FLASH_RDSR, &reg_value);
-			if(reg_value & FLASH_RDSR_WEL_BIT){
-							return 0;
-			}
+	// for(uint32_t i=0;i<WAIT_MS;i++) {
+    for(;;) {
+		/* Write the WREN command */
+		spi_flash_write(&command, 1);
+		/* Check RDSR for write enable */
+		reg_value = 0;
+		spi_flash_read_reg(FLASH_RDSR, &reg_value);
+		if(reg_value & FLASH_RDSR_WEL_BIT){
+		    return 0;
+		}
+    	vTaskDelay(1 / portTICK_PERIOD_MS);
 	}
 	// Currently this is never reached. It might be good to make a max attempts value.
+    printf("spi_flash_wait_wren timeout\n");
 	return -1;
 }
 
@@ -78,6 +84,7 @@ static int spi_flash_en4b()
 		/* Set EN4B */
 		spi_flash_write(&command, 1);
 		/* Read the configuration register */
+		rdcr_value = 0;
 		spi_flash_read_reg(FLASH_RDCR, &rdcr_value);
 
 		/* Check if 4-byte mode is enabled */
@@ -98,9 +105,20 @@ int init_sd_spi_mode()
 {
 	/* set the spi flash into 4-Byte addressing mode */
 	if(spi_flash_en4b()) {
-					printf("FLASH ERROR: Failed to init flash in 4-byte address mode\n");
-					return -1;
+		printf("FLASH ERROR: Failed to init flash in 4-byte address mode\n");
+		return -1;
 	}
+    uint8_t buf[512];
+    uint64_t addr = 0x2810;
+    printf("==DEBUG, FIRST 512 (%X) bytes==\n", addr);
+    spi_flash_read_page(0x2800, buf, 512);
+    for(int i=0; i<512; i++) {
+        printf("%02X", buf[i]);
+    }
+    // for(;;){}
+    printf("\n==");
+
+    return 0;
 
 	/* TEST STUFF BELOW */
 	/* Enable 4-byte addressing */
@@ -162,10 +180,17 @@ int init_sd_spi_mode()
 int spi_flash_read_page(uint32_t address, uint8_t *res_buf, uint32_t buf_len)
 {
 	uint8_t command = FLASH_READ;
+    uint8_t address_arr[4] = {0,0,0,0};
+	address_arr[0] = (uint8_t)((address & 0xFF000000) >> 24);
+	address_arr[1] = (uint8_t)((address & 0x00FF0000) >> 16); 
+	address_arr[2] = (uint8_t)((address & 0x0000FF00) >> 8); 
+	address_arr[3] = (uint8_t)(address & 0x000000FF);
 	gpio_put(FLASH_CS, 0);
 	spi_write_blocking(spi1, &command, 1);
-	spi_write_blocking(spi1, (uint8_t *)&address, 4);
+  	spi_write_blocking(spi1, address_arr, 4);
+	vTaskDelay(1 / portTICK_PERIOD_MS);
 	spi_read_blocking(spi1, dummy_value, res_buf, buf_len);
+    gpio_put(FLASH_CS, 1);
 	return 0;
 }
 
@@ -174,12 +199,12 @@ int spi_flash_page_program(uint32_t address, uint8_t *buf, uint32_t buf_len)
 	// Only 256 bytes can be transfered at a time.
 	// Make this function break up the writes into 256 byte chunks.
 	uint8_t command = FLASH_PP;
-	uint8_t response;
-	uint8_t reg_value;
-	uint8_t read_buf[256];
-	uint8_t address_arr[4];
+	uint8_t response = 0;
+	uint8_t reg_value = 0;
+	// uint8_t read_buf[256];
+	uint8_t address_arr[4] = {0,0,0,0};
 	uint32_t remaining_bytes = buf_len;
-	uint32_t bytes_to_write;
+	uint32_t bytes_to_write = 0;
 
 	/* Break the writes into 256 byte chunks */
 	while(remaining_bytes > 0) {
@@ -189,20 +214,34 @@ int spi_flash_page_program(uint32_t address, uint8_t *buf, uint32_t buf_len)
 					return -1;
 			}
 			spi_flash_read_reg(FLASH_RDSR, &reg_value);
-			bytes_to_write = (remaining_bytes > 256) ? 256: remaining_bytes;
+			bytes_to_write = (remaining_bytes >= 256) ? 256: remaining_bytes;
+			// bytes_to_write = (remaining_bytes >= 64) ? 64: remaining_bytes;
+
+			// DEBUG, NO CHIP ENABLE FOR TESTING
 			gpio_put(FLASH_CS, 0);
-  		spi_write_blocking(spi1, &command, 1);
+
+			command = FLASH_PP;
+  		    spi_write_blocking(spi1, &command, 1);
 
 			/* Convert the address into a 4 byte array */
 			/* I was doing this like: (uint8_t *)&address,         */
 			/* which doesn't work because system endianness. (DUH) */
-			address_arr[0] = (uint8_t)(address >> 24);
-			address_arr[1] = (uint8_t)(address >> 16); 
-			address_arr[2] = (uint8_t)(address >> 8); 
-			address_arr[3] = (uint8_t)(address);
+			if (address_arr == NULL) {
+					printf("address_arr is null???");
+					return -1;
+			}
+			address_arr[0] = (uint8_t)((address & 0xFF000000) >> 24);
+			address_arr[1] = (uint8_t)((address & 0x00FF0000) >> 16); 
+			address_arr[2] = (uint8_t)((address & 0x0000FF00) >> 8); 
+			address_arr[3] = (uint8_t)(address & 0x000000FF);
 
-  		spi_write_blocking(spi1, address_arr, 4);
-  		spi_write_blocking(spi1, buf, bytes_to_write);
+			/* Give the idle task some time to run before writting the full block */
+			vTaskDelay(1 / portTICK_PERIOD_MS);
+  		    spi_write_blocking(spi1, address_arr, 4);
+			vTaskDelay(1 / portTICK_PERIOD_MS);
+  		    spi_write_blocking(spi1, buf, bytes_to_write);
+
+			// DEBUG NO CHIP ENABLE FOR TESTING
 			gpio_put(FLASH_CS, 1);
 
 			/* Wait for WIP flag to clean */
@@ -210,18 +249,23 @@ int spi_flash_page_program(uint32_t address, uint8_t *buf, uint32_t buf_len)
 					printf("FLASH ERROR: Failed to wait for WIP in page program\n");
 					return -2;
 			}
-			 
 			/* read the security register */
 			spi_flash_read_reg(FLASH_RDSCUR, &reg_value);
 			if(reg_value & FLASH_RDSCUR_P_FAIL) {
 							printf("FLASH ERROR: SPI flash RDSCR reported P_FAIL\n");
 							return -3;
 			}
+
+			if ((remaining_bytes - bytes_to_write) <= 0) {
+					break;
+			}
 			
 			/* Increment the buffers and counters */
 			address += bytes_to_write;         // Address is incremented to the end of the written bytes.
 			buf += bytes_to_write;			       // Buffer pointer is incremented to end of written bytes.
 			remaining_bytes -= bytes_to_write; // Bytes written is removed from remaining bytes.
+
+			vTaskDelay(1 / portTICK_PERIOD_MS);
 	}
 
 	return spi_flash_wait_wip();
@@ -241,8 +285,8 @@ int spi_flash_sector_erase(uint32_t address)
 
 	/* Send the sector erase command */
 	gpio_put(FLASH_CS, 0);
-  spi_write_blocking(spi1, &command, 1);
-  spi_write_blocking(spi1, (uint8_t*)&address, 4);
+    spi_write_blocking(spi1, &command, 1);
+    spi_write_blocking(spi1, (uint8_t*)&address, 4);
 	gpio_put(FLASH_CS, 1);
 
 	return spi_flash_wait_wip();
@@ -263,7 +307,7 @@ int spi_flash_chip_erase()
 
 	/* Send the sector erase command */
 	gpio_put(FLASH_CS, 0);
-  spi_write_blocking(spi1, &command, 1);
+    spi_write_blocking(spi1, &command, 1);
 	gpio_put(FLASH_CS, 1);
 
 	return spi_flash_wait_wip();
